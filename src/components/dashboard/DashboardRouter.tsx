@@ -215,7 +215,12 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
           />
         );
       case 'keyword-research':
-        return <KeywordResearchDashboard />;
+        return (
+          <KeywordResearchDashboard 
+            leadForms={leadForms}
+            onBulkCreate={onBulkCreate}
+          />
+        );
       case 'bulk-jobs':
         return (
           <BulkJobsDashboard

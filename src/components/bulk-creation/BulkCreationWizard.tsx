@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { ChevronLeft, ChevronRight, Rocket } from 'lucide-react';
-import { BULK_WIZARD_STEPS, BulkCreationData } from '@/types/bulkWebsiteCreation';
+import { BULK_WIZARD_STEPS, BulkCreationData, BulkKeywordEntry } from '@/types/bulkWebsiteCreation';
 import { Template } from '@/types/websiteCreation';
 import { LeadForm } from '@/types/leadForm';
 import BulkStepKeywords from './steps/BulkStepKeywords';
@@ -19,6 +19,7 @@ interface BulkCreationWizardProps {
   templates: Template[];
   leadForms: LeadForm[];
   onComplete: (data: BulkCreationData) => void;
+  prefilledKeywords?: BulkKeywordEntry[];
 }
 
 const initialData: BulkCreationData = {
@@ -32,9 +33,16 @@ const initialData: BulkCreationData = {
   scheduling: { mode: 'immediate' },
 };
 
-const BulkCreationWizard = ({ open, onOpenChange, templates, leadForms, onComplete }: BulkCreationWizardProps) => {
+const BulkCreationWizard = ({ open, onOpenChange, templates, leadForms, onComplete, prefilledKeywords }: BulkCreationWizardProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<BulkCreationData>(initialData);
+
+  // Initialize with prefilled keywords when provided
+  useEffect(() => {
+    if (prefilledKeywords && prefilledKeywords.length > 0 && open) {
+      setData(prev => ({ ...prev, keywords: prefilledKeywords }));
+    }
+  }, [prefilledKeywords, open]);
 
   const updateData = (updates: Partial<BulkCreationData>) => {
     setData((prev) => ({ ...prev, ...updates }));

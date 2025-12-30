@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 import { 
   X,
   Sparkles,
@@ -14,7 +15,8 @@ import {
   ArrowUpDown,
   Search,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  Layers
 } from 'lucide-react';
 import {
   Table,
@@ -32,9 +34,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+export interface SelectedKeywordForBulk {
+  keyword: string;
+  geo: string;
+}
+
 interface AnalysisResultsPanelProps {
   results: AnalyzedKeyword[];
   onClose: () => void;
+  onCreateBulkWebsites?: (keywords: SelectedKeywordForBulk[]) => void;
 }
 
 const getScoreColor = (score: number) => {
@@ -86,12 +94,13 @@ type SortKey = 'keyword' | 'volume' | 'score' | 'drAvg' | 'drMin' | 'rdAvg' | 'u
 type SortOrder = 'asc' | 'desc';
 type SiteTypeFilter = 'all' | 'small_site' | 'mini_site' | 'authority_blog';
 
-const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, onClose }) => {
+const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, onClose, onCreateBulkWebsites }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortKey, setSortKey] = useState<SortKey>('score');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
   const [siteTypeFilter, setSiteTypeFilter] = useState<SiteTypeFilter>('all');
   const [scoreFilter, setScoreFilter] = useState<'all' | 'easy' | 'medium' | 'hard'>('all');
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -100,6 +109,24 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
       setSortKey(key);
       setSortOrder('asc');
     }
+  };
+
+  const toggleSelection = (id: number) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
+  const selectAll = () => {
+    setSelectedIds(new Set(filteredAndSortedResults.map(r => r.id)));
+  };
+
+  const clearSelection = () => {
+    setSelectedIds(new Set());
   };
 
   const filteredAndSortedResults = useMemo(() => {
@@ -238,6 +265,22 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
     URL.revokeObjectURL(url);
   };
 
+  const handleCreateBulkWebsites = () => {
+    if (!onCreateBulkWebsites || selectedIds.size === 0) return;
+    
+    const selectedKeywords: SelectedKeywordForBulk[] = results
+      .filter(r => selectedIds.has(r.id))
+      .map(r => ({
+        keyword: r.keyword,
+        geo: r.country.toLowerCase()
+      }));
+    
+    onCreateBulkWebsites(selectedKeywords);
+  };
+
+  const allSelected = filteredAndSortedResults.length > 0 && 
+    filteredAndSortedResults.every(r => selectedIds.has(r.id));
+
   const SortHeader = ({ label, sortKeyValue }: { label: string; sortKeyValue: SortKey }) => (
     <TableHead 
       className="cursor-pointer hover:bg-muted/50 select-none"
@@ -266,10 +309,17 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
               <CardTitle className="text-lg">AI Analysis Results</CardTitle>
               <p className="text-sm text-muted-foreground">
                 {filteredAndSortedResults.length} of {results.length} keyword{results.length !== 1 ? 's' : ''}
+                {selectedIds.size > 0 && ` • ${selectedIds.size} selected`}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {selectedIds.size > 0 && onCreateBulkWebsites && (
+              <Button onClick={handleCreateBulkWebsites} className="bg-primary">
+                <Layers className="h-4 w-4 mr-2" />
+                Create {selectedIds.size} Websites in Bulk
+              </Button>
+            )}
             <Button variant="outline" size="sm" onClick={downloadCSV}>
               <Download className="h-4 w-4 mr-2" />
               Export CSV
@@ -279,6 +329,23 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
             </Button>
           </div>
         </div>
+
+        {/* Selection Controls */}
+        {onCreateBulkWebsites && (
+          <div className="flex items-center gap-3 mt-3 p-3 bg-muted/30 rounded-lg">
+            <Button variant="outline" size="sm" onClick={selectAll}>
+              Select All ({filteredAndSortedResults.length})
+            </Button>
+            {selectedIds.size > 0 && (
+              <Button variant="outline" size="sm" onClick={clearSelection}>
+                Clear Selection
+              </Button>
+            )}
+            <span className="text-sm text-muted-foreground">
+              Select keywords to create websites in bulk
+            </span>
+          </div>
+        )}
 
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t">
@@ -324,7 +391,16 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
+                  {onCreateBulkWebsites && (
+                    <TableHead className="w-12">
+                      <Checkbox 
+                        checked={allSelected}
+                        onCheckedChange={(checked) => checked ? selectAll() : clearSelection()}
+                      />
+                    </TableHead>
+                  )}
                   <SortHeader label="Keyword" sortKeyValue="keyword" />
+                  <TableHead>GEO</TableHead>
                   <SortHeader label="Volume" sortKeyValue="volume" />
                   <SortHeader label="Score" sortKeyValue="score" />
                   <SortHeader label="DR Avg" sortKeyValue="drAvg" />
@@ -342,7 +418,7 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
               <TableBody>
                 {filteredAndSortedResults.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={13} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={onCreateBulkWebsites ? 15 : 14} className="text-center text-muted-foreground py-8">
                       No results match your filters
                     </TableCell>
                   </TableRow>
@@ -351,11 +427,28 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                     const siteInfo = getSiteTypeInfo(result.analysis.recommendedSiteType);
                     const SiteIcon = siteInfo.icon;
                     const avgScore = Math.round((result.analysis.domainPower.score + result.analysis.backlinks.score + result.analysis.pagePower.score + result.analysis.intent.score) / 4);
+                    const isSelected = selectedIds.has(result.id);
 
                     return (
-                      <TableRow key={result.id}>
+                      <TableRow 
+                        key={result.id} 
+                        className={isSelected ? 'bg-primary/5' : ''}
+                        onClick={() => onCreateBulkWebsites && toggleSelection(result.id)}
+                        style={{ cursor: onCreateBulkWebsites ? 'pointer' : 'default' }}
+                      >
+                        {onCreateBulkWebsites && (
+                          <TableCell onClick={(e) => e.stopPropagation()}>
+                            <Checkbox 
+                              checked={isSelected}
+                              onCheckedChange={() => toggleSelection(result.id)}
+                            />
+                          </TableCell>
+                        )}
                         <TableCell className="font-medium max-w-[200px] truncate" title={result.keyword}>
                           {result.keyword}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{result.country.toUpperCase()}</Badge>
                         </TableCell>
                         <TableCell>{result.volume.toLocaleString()}</TableCell>
                         <TableCell>

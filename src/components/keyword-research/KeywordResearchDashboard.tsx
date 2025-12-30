@@ -1,17 +1,30 @@
-
 import React, { useState, useEffect } from 'react';
 import { useKeywordResearch } from '@/hooks/useKeywordResearch';
 import SearchHeader from './SearchHeader';
 import FiltersPanel from './FiltersPanel';
 import KeywordsTable from './KeywordsTable';
 import SummaryActions from './SummaryActions';
-import AnalysisResultsPanel from './AnalysisResultsPanel';
+import AnalysisResultsPanel, { SelectedKeywordForBulk } from './AnalysisResultsPanel';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import BulkCreationWizard from '@/components/bulk-creation/BulkCreationWizard';
+import { ALL_TEMPLATES } from '@/utils/templates';
+import { LeadForm } from '@/types/leadForm';
+import { BulkKeywordEntry, BulkCreationData } from '@/types/bulkWebsiteCreation';
 
-const KeywordResearchDashboard: React.FC = () => {
+interface KeywordResearchDashboardProps {
+  leadForms?: LeadForm[];
+  onBulkCreate?: (data: BulkCreationData) => void;
+}
+
+const KeywordResearchDashboard: React.FC<KeywordResearchDashboardProps> = ({ 
+  leadForms = [], 
+  onBulkCreate 
+}) => {
   const [activeTab, setActiveTab] = useState('keywords');
+  const [showBulkWizard, setShowBulkWizard] = useState(false);
+  const [prefilledKeywords, setPrefilledKeywords] = useState<BulkKeywordEntry[]>([]);
   
   const {
     allKeywords,
@@ -41,6 +54,28 @@ const KeywordResearchDashboard: React.FC = () => {
   const handleCloseAnalysis = () => {
     closeAnalysis();
     setActiveTab('keywords');
+  };
+
+  const handleCreateBulkWebsites = (keywords: SelectedKeywordForBulk[]) => {
+    // Convert selected keywords to BulkKeywordEntry format
+    const bulkKeywords: BulkKeywordEntry[] = keywords.map((kw, index) => ({
+      id: `kw-${Date.now()}-${index}`,
+      keyword: kw.keyword,
+      geo: kw.geo,
+      tld: '.com',
+      domainStatus: 'pending' as const,
+    }));
+    
+    setPrefilledKeywords(bulkKeywords);
+    setShowBulkWizard(true);
+  };
+
+  const handleBulkWizardComplete = (data: BulkCreationData) => {
+    if (onBulkCreate) {
+      onBulkCreate(data);
+    }
+    setShowBulkWizard(false);
+    setPrefilledKeywords([]);
   };
 
   return (
@@ -104,6 +139,7 @@ const KeywordResearchDashboard: React.FC = () => {
               <AnalysisResultsPanel 
                 results={analysisResults} 
                 onClose={handleCloseAnalysis}
+                onCreateBulkWebsites={onBulkCreate ? handleCreateBulkWebsites : undefined}
               />
             )}
           </TabsContent>
@@ -115,6 +151,15 @@ const KeywordResearchDashboard: React.FC = () => {
           <p>Click "Load Demo" to get started with sample keyword data.</p>
         </div>
       )}
+
+      <BulkCreationWizard
+        open={showBulkWizard}
+        onOpenChange={setShowBulkWizard}
+        templates={ALL_TEMPLATES}
+        leadForms={leadForms}
+        onComplete={handleBulkWizardComplete}
+        prefilledKeywords={prefilledKeywords}
+      />
     </div>
   );
 };
