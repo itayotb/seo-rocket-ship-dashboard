@@ -69,19 +69,6 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ masterCategoryF
               <SelectItem value="1y">1 Year</SelectItem>
             </SelectContent>
           </Select>
-          
-          <Select value={filters.category || 'all'} onValueChange={(value) => handleFilterChange('category', value)}>
-            <SelectTrigger className="w-full sm:w-40">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="technology">Technology</SelectItem>
-              <SelectItem value="ecommerce">E-commerce</SelectItem>
-              <SelectItem value="health">Health</SelectItem>
-              <SelectItem value="food">Food</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
       </div>
 
