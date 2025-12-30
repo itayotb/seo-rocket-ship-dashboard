@@ -64,18 +64,10 @@ export interface PagePowerAnalysis {
   score: number;
 }
 
-export interface IntentAnalysis {
-  mainIntent: IntentType;
-  branded: boolean;
-  local: boolean;
-  score: number;
-}
-
 export interface KeywordAnalysis {
   domainPower: DomainPowerAnalysis;
   backlinks: BacklinksAnalysis;
   pagePower: PagePowerAnalysis;
-  intent: IntentAnalysis;
   serpStabilityScore: number;
   difficultyScore: number;
   difficultyLabel: DifficultyLabel;

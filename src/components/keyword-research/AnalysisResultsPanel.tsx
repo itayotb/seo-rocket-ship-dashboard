@@ -87,18 +87,10 @@ const columnTooltips: Record<string, { title: string; description: string }> = {
     title: 'Page Score',
     description: 'Difficulty score based on individual page strength (URL Rating). Indicates on-page optimization level of competitors. 0-100, lower = easier.'
   },
-  intent: {
-    title: 'Intent Score',
-    description: 'Score based on search intent analysis. Commercial/Transactional = 80, Informational = 65, Navigational = 85, Mixed = 40. +10 if branded, +5 if local.'
-  },
   siteType: {
     title: 'Recommended Site Type',
     description: 'Recommendation for the type of site needed to rank: Small Site (1-4 pages), Mini Site (up to 10 pages), or Authority Blog (content-heavy site).'
   },
-  flags: {
-    title: 'Flags',
-    description: 'Special indicators: Local = has local search intent requiring geo-targeting.'
-  }
 };
 
 export interface SelectedKeywordForBulk {
@@ -287,12 +279,10 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
       'Domain Score',
       'Backlinks Score',
       'Page Score',
-      'Intent Score',
       'SERP Stability',
       'Difficulty Score',
       'Difficulty Label',
-      'Site Type',
-      'Local'
+      'Site Type'
     ];
 
     const rows = filteredAndSortedResults.map(r => {
@@ -309,12 +299,10 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
         r.analysis.domainPower.score,
         r.analysis.backlinks.score,
         r.analysis.pagePower.score,
-        r.analysis.intent.score,
         r.analysis.serpStabilityScore,
         r.analysis.difficultyScore,
         r.analysis.difficultyLabel,
-        getSiteTypeInfo(r.analysis.recommendedSiteType).label,
-        r.analysis.intent.local ? 'Yes' : 'No'
+        getSiteTypeInfo(r.analysis.recommendedSiteType).label
       ];
     });
 
@@ -510,15 +498,13 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                   <StaticHeader label="Domain" tooltipKey="domain" />
                   <StaticHeader label="Backlinks" tooltipKey="backlinks" />
                   <StaticHeader label="Page" tooltipKey="page" />
-                  <StaticHeader label="Intent" tooltipKey="intent" />
                   <SortHeader label="Site Type" sortKeyValue="siteType" tooltipKey="siteType" />
-                  <StaticHeader label="Flags" tooltipKey="flags" />
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredAndSortedResults.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={onCreateBulkWebsites ? 15 : 14} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={onCreateBulkWebsites ? 13 : 12} className="text-center text-muted-foreground py-8">
                       No results match your filters
                     </TableCell>
                   </TableRow>
@@ -575,23 +561,9 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                           </span>
                         </TableCell>
                         <TableCell>
-                          <span className={getScoreColor(result.analysis.intent.score)}>
-                            {result.analysis.intent.score}
-                          </span>
-                        </TableCell>
-                        <TableCell>
                           <div className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs ${siteInfo.color}`}>
                             <SiteIcon className="h-3 w-3" />
                             <span>{siteInfo.label}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-1">
-                            {result.analysis.intent.local && (
-                              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                                Local
-                              </Badge>
-                            )}
                           </div>
                         </TableCell>
                       </TableRow>
