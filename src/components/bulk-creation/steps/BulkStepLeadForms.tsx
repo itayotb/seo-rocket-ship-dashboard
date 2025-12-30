@@ -66,27 +66,84 @@ const BulkStepLeadForms = ({
     return groups;
   }, [filteredLeadForms]);
 
-  const handlePercentageChange = (leadFormId: string, percentage: number) => {
+  const handlePercentageChange = (leadFormId: string, newPercentage: number) => {
     const existingIndex = distribution.findIndex((d) => d.leadFormId === leadFormId);
     
     if (existingIndex >= 0) {
-      const newDistribution = [...distribution];
-      if (percentage === 0) {
-        newDistribution.splice(existingIndex, 1);
-      } else {
-        newDistribution[existingIndex] = {
-          ...newDistribution[existingIndex],
-          percentage,
-        };
+      if (newPercentage === 0) {
+        // Remove and redistribute
+        const remaining = distribution.filter((d) => d.leadFormId !== leadFormId);
+        if (remaining.length > 0) {
+          const equalShare = Math.floor(100 / remaining.length);
+          const remainder = 100 - (equalShare * remaining.length);
+          const updated = remaining.map((d, idx) => ({
+            ...d,
+            percentage: equalShare + (idx === 0 ? remainder : 0),
+          }));
+          onDistributionChange(updated);
+        } else {
+          onDistributionChange([]);
+        }
+        return;
       }
-      onDistributionChange(newDistribution);
-    } else if (percentage > 0) {
+      
+      const otherItems = distribution.filter((d) => d.leadFormId !== leadFormId);
+      
+      if (otherItems.length === 0) {
+        // Only one item, force to 100%
+        onDistributionChange([{ ...distribution[existingIndex], percentage: 100 }]);
+        return;
+      }
+
+      // Calculate remaining for others and distribute proportionally
+      const remainingForOthers = 100 - newPercentage;
+      const currentOtherTotal = otherItems.reduce((sum, d) => sum + d.percentage, 0);
+      
+      const updated = distribution.map((d) => {
+        if (d.leadFormId === leadFormId) {
+          return { ...d, percentage: newPercentage };
+        }
+        if (currentOtherTotal > 0) {
+          const proportion = d.percentage / currentOtherTotal;
+          return { ...d, percentage: Math.round(remainingForOthers * proportion) };
+        }
+        return { ...d, percentage: Math.round(remainingForOthers / otherItems.length) };
+      });
+
+      // Fix rounding errors
+      const total = updated.reduce((sum, d) => sum + d.percentage, 0);
+      if (total !== 100 && updated.length > 0) {
+        const diff = 100 - total;
+        const firstOtherIdx = updated.findIndex((d) => d.leadFormId !== leadFormId);
+        if (firstOtherIdx >= 0) {
+          updated[firstOtherIdx].percentage += diff;
+        }
+      }
+
+      onDistributionChange(updated);
+    } else if (newPercentage > 0) {
+      // Adding new lead form - auto-balance
       const form = leadForms.find((f) => f.id === leadFormId);
       if (form) {
-        onDistributionChange([
-          ...distribution,
-          { leadFormId, leadFormName: form.name, percentage },
-        ]);
+        if (distribution.length === 0) {
+          // First one gets 100%
+          onDistributionChange([{ leadFormId, leadFormName: form.name, percentage: 100 }]);
+        } else {
+          // Redistribute equally
+          const newCount = distribution.length + 1;
+          const equalShare = Math.floor(100 / newCount);
+          const remainder = 100 - (equalShare * newCount);
+          
+          const updated = distribution.map((d, idx) => ({
+            ...d,
+            percentage: equalShare + (idx === 0 ? remainder : 0),
+          }));
+          
+          onDistributionChange([
+            ...updated,
+            { leadFormId, leadFormName: form.name, percentage: equalShare },
+          ]);
+        }
       }
     }
   };
