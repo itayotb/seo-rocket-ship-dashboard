@@ -3,8 +3,8 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Rocket, Check, ExternalLink } from 'lucide-react';
-import { WebsiteCreationData } from '@/types/websiteCreation';
+import { Rocket, Check, ExternalLink, Sparkles, Target, Globe } from 'lucide-react';
+import { WebsiteCreationData, GEO_OPTIONS } from '@/types/websiteCreation';
 import { getTemplateById } from '@/utils/templateData';
 
 interface WebsiteStepFiveProps {
@@ -14,6 +14,7 @@ interface WebsiteStepFiveProps {
 
 const WebsiteStepFive = ({ data, onUpdate }: WebsiteStepFiveProps) => {
   const template = getTemplateById(data.template);
+  const geoLabel = GEO_OPTIONS.find(g => g.value === data.geo)?.label || data.geo;
 
   const generateFinalSummary = () => {
     return {
@@ -23,16 +24,14 @@ const WebsiteStepFive = ({ data, onUpdate }: WebsiteStepFiveProps) => {
       template: template?.name || 'Unknown',
       keywords: data.keywords,
       totalPages: template?.pages?.length || 1,
-      aiEnhanced: !!data.aiPrompt
+      aiEnhanced: !!data.serpAnalysis?.analyzed
     };
   };
 
   const summary = generateFinalSummary();
 
   const handleViewFullSite = () => {
-    // This would open the generated website in a new tab
     console.log('Opening generated website in new tab');
-    // In a real implementation, this would navigate to the generated website
     window.open('/generated-website', '_blank');
   };
 
@@ -48,29 +47,64 @@ const WebsiteStepFive = ({ data, onUpdate }: WebsiteStepFiveProps) => {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <p className="text-sm text-gray-500">Website Name</p>
+              <p className="text-sm text-muted-foreground">Website Name</p>
               <p className="font-semibold">{summary.websiteName}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Domain</p>
+              <p className="text-sm text-muted-foreground">Domain</p>
               <p className="font-semibold">{summary.domain}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Template</p>
+              <p className="text-sm text-muted-foreground">Template</p>
               <p className="font-semibold">{summary.template}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Pages</p>
+              <p className="text-sm text-muted-foreground">Pages</p>
               <p className="font-semibold">{summary.totalPages}</p>
             </div>
           </div>
+
+          {/* Main Keyword & GEO */}
+          {data.mainKeyword && (
+            <div className="mt-4 grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <Target className="h-3 w-3" /> Main Keyword
+                </p>
+                <p className="font-semibold">{data.mainKeyword}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <Globe className="h-3 w-3" /> Target GEO
+                </p>
+                <p className="font-semibold">{geoLabel}</p>
+              </div>
+            </div>
+          )}
+
+          {/* AI Recommended Sections */}
+          {data.serpAnalysis?.recommendedSections && data.serpAnalysis.recommendedSections.length > 0 && (
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground mb-2 flex items-center gap-1">
+                <Sparkles className="h-3 w-3" /> AI Recommended Sections
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {data.serpAnalysis.recommendedSections.map((section, index) => (
+                  <Badge key={index} variant="secondary">
+                    {section}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
           
+          {/* Related Keywords */}
           {summary.keywords.length > 0 && (
             <div className="mt-4">
-              <p className="text-sm text-gray-500 mb-2">SEO Keywords</p>
+              <p className="text-sm text-muted-foreground mb-2">Related Keywords</p>
               <div className="flex flex-wrap gap-2">
                 {summary.keywords.map((keyword, index) => (
-                  <Badge key={index} variant="secondary">
+                  <Badge key={index} variant="outline">
                     {keyword}
                   </Badge>
                 ))}
@@ -81,7 +115,7 @@ const WebsiteStepFive = ({ data, onUpdate }: WebsiteStepFiveProps) => {
           {summary.aiEnhanced && (
             <div className="mt-4 flex items-center space-x-2 text-green-600">
               <Check className="h-4 w-4" />
-              <span className="text-sm">AI-Enhanced Content</span>
+              <span className="text-sm">AI-Analyzed SERP Content</span>
             </div>
           )}
           
