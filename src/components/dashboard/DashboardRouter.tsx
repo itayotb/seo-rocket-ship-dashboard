@@ -10,6 +10,7 @@ import ReportsDashboard from '@/components/reports/ReportsDashboard';
 import LeadFormsManagement from '@/components/leadforms/LeadFormsManagement';
 import CredentialsManagement from '@/components/credentials/CredentialsManagement';
 import PermissionsManagement from '@/components/permissions/PermissionsManagement';
+import KeywordResearchDashboard from '@/components/keyword-research/KeywordResearchDashboard';
 import CreateWebsiteButton from '@/components/dashboard/CreateWebsiteButton';
 import { 
   ToolsPlaceholder, 
@@ -199,6 +200,8 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
             onDeleteUser={onDeleteUser}
           />
         );
+      case 'keyword-research':
+        return <KeywordResearchDashboard />;
       case 'tools':
         return <ToolsPlaceholder />;
       case 'settings':

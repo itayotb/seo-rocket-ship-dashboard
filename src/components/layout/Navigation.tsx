@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Home, BarChart3, Globe, Layout, FileText, Cloud, Menu, X, FileCode, Key, Shield } from 'lucide-react';
+import { Home, BarChart3, Globe, Layout, FileText, Cloud, Menu, X, FileCode, Key, Shield, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
@@ -28,6 +28,7 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
     { id: 'leadforms', label: 'Lead Forms', icon: FileCode },
     { id: 'credentials', label: 'Credentials', icon: Key },
     { id: 'permissions', label: 'Permissions', icon: Shield },
+    { id: 'keyword-research', label: 'Keyword Research', icon: Search },
   ];
 
   const handleMobileItemClick = (itemId: string) => {

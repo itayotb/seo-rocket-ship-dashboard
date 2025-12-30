@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "keyword": "car title loans",
+    "country": "ca",
+    "difficulty": 37,
+    "volume": 4000,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
+  },
+  {
+    "id": 2,
+    "keyword": "car loans",
+    "country": "ca",
+    "difficulty": 41,
+    "volume": 3100,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
+  },
+  {
+    "id": 3,
+    "keyword": "bad credit car loans",
+    "country": "ca",
+    "difficulty": 0,
+    "volume": 1200,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
+  },
+  {
+    "id": 4,
+    "keyword": "car loans canada",
+    "country": "ca",
+    "difficulty": 50,
+    "volume": 900,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
+  },
+  {
+    "id": 5,
+    "keyword": "car repair loans",
+    "country": "ca",
+    "difficulty": 0,
+    "volume": 500,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
+  },
+  {
+    "id": 6,
+    "keyword": "no credit check car loans",
+    "country": "ca",
+    "difficulty": 0,
+    "volume": 500,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
+  },
+  {
+    "id": 7,
+    "keyword": "same day car loans",
+    "country": "ca",
+    "difficulty": 0,
+    "volume": 350,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
+  },
+  {
+    "id": 8,
+    "keyword": "bad credit car loans ontario",
+    "country": "ca",
+    "difficulty": 0,
+    "volume": 300,
+    "intentsRaw": "Informational,Commercial,Non-branded,Local"
+  },
+  {
+    "id": 9,
+    "keyword": "bad credit car loans alberta",
+    "country": "ca",
+    "difficulty": 0,
+    "volume": 250,
+    "intentsRaw": "Informational,Commercial,Non-branded,Local"
+  },
+  {
+    "id": 10,
+    "keyword": "bad credit car loans bc",
+    "country": "ca",
+    "difficulty": 0,
+    "volume": 250,
+    "intentsRaw": "Informational,Non-branded,Non-local"
+  }
+]
