@@ -33,7 +33,7 @@ const WebsiteCreationForm = ({ currentStep, data, onUpdate, onNavigateToDomains,
       case 2:
         return <WebsiteStepTwoPointFive data={data} onUpdate={onUpdate} />;
       case 3:
-        return <WebsiteStepThree data={data} onUpdate={onUpdate} />;
+        return <WebsiteStepThree data={data} onUpdate={onUpdate} leadForms={leadForms} />;
       case 4:
         return <WebsiteStepSix data={data} onUpdate={onUpdate} leadForms={leadForms} />;
       case 5:

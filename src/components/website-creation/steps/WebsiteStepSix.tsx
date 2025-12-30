@@ -28,7 +28,9 @@ const WebsiteStepSix: React.FC<WebsiteStepSixProps> = ({ data, onUpdate, leadFor
         <FileCode className="h-12 w-12 mx-auto text-primary mb-4" />
         <h2 className="text-2xl font-bold">Select Lead Form</h2>
         <p className="text-muted-foreground mt-2">
-          Choose a lead form to embed in your website (optional)
+          {data.leadFormId 
+            ? 'A lead form was auto-selected based on your template. You can change it if needed.'
+            : 'Choose a lead form to embed in your website (optional)'}
         </p>
       </div>
 

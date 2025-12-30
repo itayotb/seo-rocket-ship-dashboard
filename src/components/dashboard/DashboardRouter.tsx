@@ -15,7 +15,7 @@ import {
   SettingsPlaceholder 
 } from '@/components/dashboard/PlaceholderSections';
 import { Website } from '@/types/website';
-import { CreatedWebsite } from '@/types/websiteCreation';
+import { CreatedWebsite, Template } from '@/types/websiteCreation';
 import { LeadForm } from '@/types/leadForm';
 import { Credential } from '@/types/credential';
 
@@ -39,8 +39,9 @@ interface DashboardRouterProps {
   onWebsiteCreated: (website: CreatedWebsite) => void;
   masterCategoryFilter: string;
   leadForms: LeadForm[];
-  onAddLeadForm: (name: string, code: string) => void;
-  onUpdateLeadForm: (id: string, name: string, code: string) => void;
+  templates: Template[];
+  onAddLeadForm: (name: string, code: string, category: string, templateId?: string) => void;
+  onUpdateLeadForm: (id: string, name: string, code: string, category: string, templateId?: string) => void;
   onDeleteLeadForm: (id: string) => void;
   onBulkLeadFormChange: (websiteIds: string[], leadFormId: string | undefined) => void;
   credentials: Credential[];
@@ -77,6 +78,7 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
   onWebsiteCreated,
   masterCategoryFilter,
   leadForms,
+  templates,
   onAddLeadForm,
   onUpdateLeadForm,
   onDeleteLeadForm,
@@ -110,6 +112,8 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
         return (
           <LeadFormsManagement
             leadForms={leadForms}
+            masterCategoryFilter={masterCategoryFilter}
+            templates={templates}
             onAddLeadForm={onAddLeadForm}
             onUpdateLeadForm={onUpdateLeadForm}
             onDeleteLeadForm={onDeleteLeadForm}

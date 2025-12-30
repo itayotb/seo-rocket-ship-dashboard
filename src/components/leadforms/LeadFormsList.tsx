@@ -1,7 +1,9 @@
 import React from 'react';
 import { LeadForm } from '@/types/leadForm';
+import { Template } from '@/types/websiteCreation';
 import { FileCode, Copy, Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -12,17 +14,25 @@ import {
 } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { getCategoryLabel } from '@/utils/templateCategories';
 
 interface LeadFormsListProps {
   leadForms: LeadForm[];
+  templates: Template[];
   onEdit: (leadForm: LeadForm) => void;
   onDelete: (id: string) => void;
 }
 
-const LeadFormsList: React.FC<LeadFormsListProps> = ({ leadForms, onEdit, onDelete }) => {
+const LeadFormsList: React.FC<LeadFormsListProps> = ({ leadForms, templates, onEdit, onDelete }) => {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success('Code copied to clipboard');
+  };
+
+  const getTemplateName = (templateId?: string) => {
+    if (!templateId) return null;
+    const template = templates.find(t => t.id === templateId);
+    return template?.name || null;
   };
 
   if (leadForms.length === 0) {
@@ -41,9 +51,10 @@ const LeadFormsList: React.FC<LeadFormsListProps> = ({ leadForms, onEdit, onDele
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Template</TableHead>
             <TableHead>Code</TableHead>
             <TableHead>Created</TableHead>
-            <TableHead>Updated</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -52,8 +63,18 @@ const LeadFormsList: React.FC<LeadFormsListProps> = ({ leadForms, onEdit, onDele
             <TableRow key={leadForm.id}>
               <TableCell className="font-medium">{leadForm.name}</TableCell>
               <TableCell>
+                <Badge variant="secondary">{getCategoryLabel(leadForm.category)}</Badge>
+              </TableCell>
+              <TableCell>
+                {getTemplateName(leadForm.templateId) ? (
+                  <Badge variant="outline">{getTemplateName(leadForm.templateId)}</Badge>
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
+              </TableCell>
+              <TableCell>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-sm truncate max-w-[200px]">
+                  <span className="font-mono text-sm truncate max-w-[150px]">
                     {leadForm.code.substring(0, 30)}...
                   </span>
                   <Button
@@ -68,9 +89,6 @@ const LeadFormsList: React.FC<LeadFormsListProps> = ({ leadForms, onEdit, onDele
               </TableCell>
               <TableCell className="text-muted-foreground">
                 {format(new Date(leadForm.createdAt), 'dd/MM/yyyy')}
-              </TableCell>
-              <TableCell className="text-muted-foreground">
-                {format(new Date(leadForm.updatedAt), 'dd/MM/yyyy')}
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-1">

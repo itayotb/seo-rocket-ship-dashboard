@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, FileCode } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Plus, FileCode, Search } from 'lucide-react';
 import LeadFormsList from './LeadFormsList';
 import LeadFormDialog from './LeadFormDialog';
 import { LeadForm } from '@/types/leadForm';
+import { Template } from '@/types/websiteCreation';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,13 +21,17 @@ import { toast } from 'sonner';
 
 interface LeadFormsManagementProps {
   leadForms: LeadForm[];
-  onAddLeadForm: (name: string, code: string) => void;
-  onUpdateLeadForm: (id: string, name: string, code: string) => void;
+  masterCategoryFilter: string;
+  templates: Template[];
+  onAddLeadForm: (name: string, code: string, category: string, templateId?: string) => void;
+  onUpdateLeadForm: (id: string, name: string, code: string, category: string, templateId?: string) => void;
   onDeleteLeadForm: (id: string) => void;
 }
 
 const LeadFormsManagement: React.FC<LeadFormsManagementProps> = ({
   leadForms,
+  masterCategoryFilter,
+  templates,
   onAddLeadForm,
   onUpdateLeadForm,
   onDeleteLeadForm
@@ -33,17 +39,18 @@ const LeadFormsManagement: React.FC<LeadFormsManagementProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingLeadForm, setEditingLeadForm] = useState<LeadForm | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleEdit = (leadForm: LeadForm) => {
     setEditingLeadForm(leadForm);
     setIsDialogOpen(true);
   };
 
-  const handleSave = (name: string, code: string) => {
+  const handleSave = (name: string, code: string, category: string, templateId?: string) => {
     if (editingLeadForm) {
-      onUpdateLeadForm(editingLeadForm.id, name, code);
+      onUpdateLeadForm(editingLeadForm.id, name, code, category, templateId);
     } else {
-      onAddLeadForm(name, code);
+      onAddLeadForm(name, code, category, templateId);
     }
     setEditingLeadForm(null);
   };
@@ -60,6 +67,15 @@ const LeadFormsManagement: React.FC<LeadFormsManagementProps> = ({
       setDeleteId(null);
     }
   };
+
+  // Filter lead forms by master category filter
+  const filteredLeadForms = leadForms.filter(form => {
+    const matchesCategory = masterCategoryFilter === 'all' || form.category === masterCategoryFilter;
+    const matchesSearch = 
+      form.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      form.code.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div className="space-y-6">
@@ -79,8 +95,19 @@ const LeadFormsManagement: React.FC<LeadFormsManagementProps> = ({
         </Button>
       </div>
 
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search lead forms..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
       <LeadFormsList
-        leadForms={leadForms}
+        leadForms={filteredLeadForms}
+        templates={templates}
         onEdit={handleEdit}
         onDelete={(id) => setDeleteId(id)}
       />
@@ -90,6 +117,7 @@ const LeadFormsManagement: React.FC<LeadFormsManagementProps> = ({
         onClose={handleCloseDialog}
         onSave={handleSave}
         editingLeadForm={editingLeadForm}
+        templates={templates}
       />
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
@@ -102,7 +130,7 @@ const LeadFormsManagement: React.FC<LeadFormsManagementProps> = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive hover:bg-destructive/90">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

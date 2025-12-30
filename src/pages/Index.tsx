@@ -6,10 +6,11 @@ import { useDashboardState } from '@/hooks/useDashboardState';
 import { useWebsiteData } from '@/hooks/useWebsiteData';
 import { useLeadForms } from '@/hooks/useLeadForms';
 import { useCredentials } from '@/hooks/useCredentials';
+import { ALL_TEMPLATES } from '@/utils/templates';
 
 const Index = () => {
   const { websites, addWebsite, bulkUpdateLeadForm } = useWebsiteData();
-  const { leadForms, addLeadForm, updateLeadForm, deleteLeadForm } = useLeadForms();
+  const { leadForms, addLeadForm, updateLeadForm, deleteLeadForm, getLeadFormByTemplateId } = useLeadForms();
   const { credentials, addCredential, updateCredential, deleteCredential } = useCredentials();
   const {
     activeSection,
@@ -81,6 +82,7 @@ const Index = () => {
         onWebsiteCreated={addWebsite}
         masterCategoryFilter={masterCategoryFilter}
         leadForms={leadForms}
+        templates={ALL_TEMPLATES}
         onAddLeadForm={addLeadForm}
         onUpdateLeadForm={updateLeadForm}
         onDeleteLeadForm={deleteLeadForm}
