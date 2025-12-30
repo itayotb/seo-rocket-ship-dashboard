@@ -2,6 +2,8 @@
 export type IntentType = "Informational" | "Commercial" | "Transactional" | "Navigational";
 export type BrandType = "Branded" | "Non-branded";
 export type LocationType = "Local" | "Non-local";
+export type DifficultyLabel = "easy" | "medium" | "hard";
+export type RecommendedSiteType = "small_site" | "mini_site" | "authority_blog";
 
 export interface KeywordRow {
   id: number;
@@ -41,3 +43,54 @@ export const defaultFilters: FiltersState = {
   includeTerms: [],
   includeMode: "any",
 };
+
+// Analysis Types
+export interface DomainPowerAnalysis {
+  drAvgTop10: number;
+  drMinTop10: number;
+  drMaxTop10: number;
+  score: number;
+}
+
+export interface BacklinksAnalysis {
+  rdAvgDofollowTop10: number;
+  rdMinDofollowTop10: number;
+  refDomainsTrafficTotal: number;
+  score: number;
+}
+
+export interface PagePowerAnalysis {
+  urAvgTop10: number;
+  score: number;
+}
+
+export interface IntentAnalysis {
+  mainIntent: IntentType;
+  serpLocked: boolean;
+  branded: boolean;
+  local: boolean;
+  score: number;
+}
+
+export interface KeywordAnalysis {
+  domainPower: DomainPowerAnalysis;
+  backlinks: BacklinksAnalysis;
+  pagePower: PagePowerAnalysis;
+  intent: IntentAnalysis;
+  contentQualityScore: number;
+  uxTrustScore: number;
+  serpStabilityScore: number;
+  difficultyScore: number;
+  difficultyLabel: DifficultyLabel;
+  recommendedSiteType: RecommendedSiteType;
+}
+
+export interface AnalyzedKeyword {
+  id: number;
+  keyword: string;
+  country: string;
+  volume: number;
+  ahrefsDifficulty: number;
+  intentsRaw: string;
+  analysis: KeywordAnalysis;
+}

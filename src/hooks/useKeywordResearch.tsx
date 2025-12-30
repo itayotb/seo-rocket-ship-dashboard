@@ -7,7 +7,8 @@ import {
   defaultFilters,
   IntentType,
   BrandType,
-  LocationType
+  LocationType,
+  AnalyzedKeyword
 } from '@/types/keywordResearch';
 
 const parseIntentsRaw = (intentsRaw: string): { 
@@ -53,6 +54,9 @@ export const useKeywordResearch = () => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResults, setAnalysisResults] = useState<AnalyzedKeyword[]>([]);
+  const [showAnalysis, setShowAnalysis] = useState(false);
 
   const loadDemoData = useCallback(async () => {
     setIsLoading(true);
@@ -64,6 +68,8 @@ export const useKeywordResearch = () => {
       setFilteredKeywords(parsedKeywords);
       setIsLoaded(true);
       setSelectedIds([]);
+      setAnalysisResults([]);
+      setShowAnalysis(false);
     } catch (error) {
       console.error('Failed to load demo data:', error);
     } finally {
@@ -138,10 +144,30 @@ export const useKeywordResearch = () => {
   const analyzeSelected = useCallback(async () => {
     if (selectedIds.length === 0) return;
     
-    // Placeholder for future API integration
-    console.log('Analyzing keywords:', selectedIds);
-    alert(`Backend coming soon! Selected ${selectedIds.length} keywords for analysis.`);
+    setIsAnalyzing(true);
+    try {
+      // Load demo analysis data
+      const res = await fetch('/data/car_loans_ca_analyzed.json');
+      const analyzedData: AnalyzedKeyword[] = await res.json();
+      
+      // Filter to only selected keywords
+      const selectedResults = analyzedData.filter(item => selectedIds.includes(item.id));
+      
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      setAnalysisResults(selectedResults);
+      setShowAnalysis(true);
+    } catch (error) {
+      console.error('Failed to analyze keywords:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
   }, [selectedIds]);
+
+  const closeAnalysis = useCallback(() => {
+    setShowAnalysis(false);
+  }, []);
 
   return {
     allKeywords,
@@ -150,11 +176,15 @@ export const useKeywordResearch = () => {
     selectedIds,
     isLoading,
     isLoaded,
+    isAnalyzing,
+    analysisResults,
+    showAnalysis,
     loadDemoData,
     applyFilters,
     toggleSelection,
     selectAll,
     clearSelection,
     analyzeSelected,
+    closeAnalysis,
   };
 };

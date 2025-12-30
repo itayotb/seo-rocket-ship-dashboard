@@ -2,13 +2,14 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { BarChart3, CheckSquare, Database, Filter } from 'lucide-react';
+import { BarChart3, CheckSquare, Database, Filter, Loader2 } from 'lucide-react';
 
 interface SummaryActionsProps {
   totalKeywords: number;
   filteredCount: number;
   selectedCount: number;
   onAnalyze: () => void;
+  isAnalyzing?: boolean;
 }
 
 const SummaryActions: React.FC<SummaryActionsProps> = ({
@@ -16,6 +17,7 @@ const SummaryActions: React.FC<SummaryActionsProps> = ({
   filteredCount,
   selectedCount,
   onAnalyze,
+  isAnalyzing = false,
 }) => {
   return (
     <Card>
@@ -41,11 +43,20 @@ const SummaryActions: React.FC<SummaryActionsProps> = ({
           
           <Button 
             onClick={onAnalyze}
-            disabled={selectedCount === 0}
+            disabled={selectedCount === 0 || isAnalyzing}
             className="gap-2"
           >
-            <BarChart3 className="h-4 w-4" />
-            Analyze Selected
+            {isAnalyzing ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Analyzing...
+              </>
+            ) : (
+              <>
+                <BarChart3 className="h-4 w-4" />
+                Analyze Selected
+              </>
+            )}
           </Button>
         </div>
       </CardContent>

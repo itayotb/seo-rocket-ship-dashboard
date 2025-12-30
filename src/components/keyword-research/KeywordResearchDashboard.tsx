@@ -5,6 +5,7 @@ import SearchHeader from './SearchHeader';
 import FiltersPanel from './FiltersPanel';
 import KeywordsTable from './KeywordsTable';
 import SummaryActions from './SummaryActions';
+import AnalysisResultsPanel from './AnalysisResultsPanel';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
 
@@ -15,12 +16,16 @@ const KeywordResearchDashboard: React.FC = () => {
     selectedIds,
     isLoading,
     isLoaded,
+    isAnalyzing,
+    analysisResults,
+    showAnalysis,
     loadDemoData,
     applyFilters,
     toggleSelection,
     selectAll,
     clearSelection,
     analyzeSelected,
+    closeAnalysis,
   } = useKeywordResearch();
 
   return (
@@ -52,13 +57,14 @@ const KeywordResearchDashboard: React.FC = () => {
             filteredCount={filteredKeywords.length}
             selectedCount={selectedIds.length}
             onAnalyze={analyzeSelected}
+            isAnalyzing={isAnalyzing}
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-1">
               <FiltersPanel onApplyFilters={applyFilters} />
             </div>
-            <div className="lg:col-span-3">
+            <div className={showAnalysis ? "lg:col-span-2" : "lg:col-span-3"}>
               <KeywordsTable
                 rows={filteredKeywords}
                 selectedIds={selectedIds}
@@ -67,6 +73,14 @@ const KeywordResearchDashboard: React.FC = () => {
                 onClearSelection={clearSelection}
               />
             </div>
+            {showAnalysis && analysisResults.length > 0 && (
+              <div className="lg:col-span-1">
+                <AnalysisResultsPanel 
+                  results={analysisResults} 
+                  onClose={closeAnalysis}
+                />
+              </div>
+            )}
           </div>
         </>
       )}

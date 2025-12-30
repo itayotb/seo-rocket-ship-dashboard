@@ -1,0 +1,392 @@
+[
+  {
+    "id": 1,
+    "keyword": "car title loans",
+    "country": "ca",
+    "volume": 4000,
+    "ahrefsDifficulty": 37,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
+    "analysis": {
+      "domainPower": {
+        "drAvgTop10": 52,
+        "drMinTop10": 18,
+        "drMaxTop10": 82,
+        "score": 58
+      },
+      "backlinks": {
+        "rdAvgDofollowTop10": 34,
+        "rdMinDofollowTop10": 3,
+        "refDomainsTrafficTotal": 320000,
+        "score": 63
+      },
+      "pagePower": {
+        "urAvgTop10": 29,
+        "score": 44
+      },
+      "intent": {
+        "mainIntent": "Commercial",
+        "serpLocked": true,
+        "branded": false,
+        "local": false,
+        "score": 72
+      },
+      "contentQualityScore": 65,
+      "uxTrustScore": 60,
+      "serpStabilityScore": 70,
+      "difficultyScore": 68,
+      "difficultyLabel": "medium",
+      "recommendedSiteType": "mini_site"
+    }
+  },
+  {
+    "id": 2,
+    "keyword": "car loans",
+    "country": "ca",
+    "volume": 3100,
+    "ahrefsDifficulty": 41,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
+    "analysis": {
+      "domainPower": {
+        "drAvgTop10": 60,
+        "drMinTop10": 22,
+        "drMaxTop10": 88,
+        "score": 66
+      },
+      "backlinks": {
+        "rdAvgDofollowTop10": 48,
+        "rdMinDofollowTop10": 5,
+        "refDomainsTrafficTotal": 520000,
+        "score": 72
+      },
+      "pagePower": {
+        "urAvgTop10": 36,
+        "score": 52
+      },
+      "intent": {
+        "mainIntent": "Commercial",
+        "serpLocked": true,
+        "branded": false,
+        "local": false,
+        "score": 78
+      },
+      "contentQualityScore": 70,
+      "uxTrustScore": 68,
+      "serpStabilityScore": 78,
+      "difficultyScore": 76,
+      "difficultyLabel": "hard",
+      "recommendedSiteType": "authority_blog"
+    }
+  },
+  {
+    "id": 3,
+    "keyword": "bad credit car loans",
+    "country": "ca",
+    "volume": 1200,
+    "ahrefsDifficulty": 0,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
+    "analysis": {
+      "domainPower": {
+        "drAvgTop10": 44,
+        "drMinTop10": 15,
+        "drMaxTop10": 79,
+        "score": 49
+      },
+      "backlinks": {
+        "rdAvgDofollowTop10": 22,
+        "rdMinDofollowTop10": 1,
+        "refDomainsTrafficTotal": 210000,
+        "score": 48
+      },
+      "pagePower": {
+        "urAvgTop10": 24,
+        "score": 38
+      },
+      "intent": {
+        "mainIntent": "Commercial",
+        "serpLocked": false,
+        "branded": false,
+        "local": false,
+        "score": 60
+      },
+      "contentQualityScore": 58,
+      "uxTrustScore": 55,
+      "serpStabilityScore": 62,
+      "difficultyScore": 55,
+      "difficultyLabel": "medium",
+      "recommendedSiteType": "mini_site"
+    }
+  },
+  {
+    "id": 4,
+    "keyword": "car loans canada",
+    "country": "ca",
+    "volume": 900,
+    "ahrefsDifficulty": 50,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
+    "analysis": {
+      "domainPower": {
+        "drAvgTop10": 58,
+        "drMinTop10": 21,
+        "drMaxTop10": 86,
+        "score": 63
+      },
+      "backlinks": {
+        "rdAvgDofollowTop10": 40,
+        "rdMinDofollowTop10": 4,
+        "refDomainsTrafficTotal": 450000,
+        "score": 68
+      },
+      "pagePower": {
+        "urAvgTop10": 32,
+        "score": 48
+      },
+      "intent": {
+        "mainIntent": "Commercial",
+        "serpLocked": true,
+        "branded": false,
+        "local": true,
+        "score": 75
+      },
+      "contentQualityScore": 67,
+      "uxTrustScore": 64,
+      "serpStabilityScore": 74,
+      "difficultyScore": 73,
+      "difficultyLabel": "hard",
+      "recommendedSiteType": "mini_site"
+    }
+  },
+  {
+    "id": 5,
+    "keyword": "car repair loans",
+    "country": "ca",
+    "volume": 500,
+    "ahrefsDifficulty": 0,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
+    "analysis": {
+      "domainPower": {
+        "drAvgTop10": 38,
+        "drMinTop10": 10,
+        "drMaxTop10": 70,
+        "score": 42
+      },
+      "backlinks": {
+        "rdAvgDofollowTop10": 14,
+        "rdMinDofollowTop10": 0,
+        "refDomainsTrafficTotal": 120000,
+        "score": 40
+      },
+      "pagePower": {
+        "urAvgTop10": 19,
+        "score": 32
+      },
+      "intent": {
+        "mainIntent": "Commercial",
+        "serpLocked": false,
+        "branded": false,
+        "local": false,
+        "score": 55
+      },
+      "contentQualityScore": 52,
+      "uxTrustScore": 50,
+      "serpStabilityScore": 58,
+      "difficultyScore": 48,
+      "difficultyLabel": "medium",
+      "recommendedSiteType": "small_site"
+    }
+  },
+  {
+    "id": 6,
+    "keyword": "no credit check car loans",
+    "country": "ca",
+    "volume": 500,
+    "ahrefsDifficulty": 0,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
+    "analysis": {
+      "domainPower": {
+        "drAvgTop10": 46,
+        "drMinTop10": 16,
+        "drMaxTop10": 80,
+        "score": 51
+      },
+      "backlinks": {
+        "rdAvgDofollowTop10": 26,
+        "rdMinDofollowTop10": 2,
+        "refDomainsTrafficTotal": 260000,
+        "score": 55
+      },
+      "pagePower": {
+        "urAvgTop10": 27,
+        "score": 42
+      },
+      "intent": {
+        "mainIntent": "Commercial",
+        "serpLocked": true,
+        "branded": false,
+        "local": false,
+        "score": 68
+      },
+      "contentQualityScore": 60,
+      "uxTrustScore": 57,
+      "serpStabilityScore": 66,
+      "difficultyScore": 62,
+      "difficultyLabel": "medium",
+      "recommendedSiteType": "mini_site"
+    }
+  },
+  {
+    "id": 7,
+    "keyword": "same day car loans",
+    "country": "ca",
+    "volume": 350,
+    "ahrefsDifficulty": 0,
+    "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
+    "analysis": {
+      "domainPower": {
+        "drAvgTop10": 42,
+        "drMinTop10": 13,
+        "drMaxTop10": 75,
+        "score": 47
+      },
+      "backlinks": {
+        "rdAvgDofollowTop10": 18,
+        "rdMinDofollowTop10": 1,
+        "refDomainsTrafficTotal": 150000,
+        "score": 45
+      },
+      "pagePower": {
+        "urAvgTop10": 22,
+        "score": 36
+      },
+      "intent": {
+        "mainIntent": "Commercial",
+        "serpLocked": false,
+        "branded": false,
+        "local": false,
+        "score": 58
+      },
+      "contentQualityScore": 54,
+      "uxTrustScore": 52,
+      "serpStabilityScore": 60,
+      "difficultyScore": 52,
+      "difficultyLabel": "medium",
+      "recommendedSiteType": "small_site"
+    }
+  },
+  {
+    "id": 8,
+    "keyword": "bad credit car loans ontario",
+    "country": "ca",
+    "volume": 300,
+    "ahrefsDifficulty": 0,
+    "intentsRaw": "Informational,Commercial,Non-branded,Local",
+    "analysis": {
+      "domainPower": {
+        "drAvgTop10": 40,
+        "drMinTop10": 12,
+        "drMaxTop10": 72,
+        "score": 44
+      },
+      "backlinks": {
+        "rdAvgDofollowTop10": 16,
+        "rdMinDofollowTop10": 0,
+        "refDomainsTrafficTotal": 130000,
+        "score": 42
+      },
+      "pagePower": {
+        "urAvgTop10": 20,
+        "score": 34
+      },
+      "intent": {
+        "mainIntent": "Commercial",
+        "serpLocked": false,
+        "branded": false,
+        "local": true,
+        "score": 57
+      },
+      "contentQualityScore": 53,
+      "uxTrustScore": 51,
+      "serpStabilityScore": 59,
+      "difficultyScore": 50,
+      "difficultyLabel": "medium",
+      "recommendedSiteType": "small_site"
+    }
+  },
+  {
+    "id": 9,
+    "keyword": "bad credit car loans alberta",
+    "country": "ca",
+    "volume": 250,
+    "ahrefsDifficulty": 0,
+    "intentsRaw": "Informational,Commercial,Non-branded,Local",
+    "analysis": {
+      "domainPower": {
+        "drAvgTop10": 39,
+        "drMinTop10": 11,
+        "drMaxTop10": 70,
+        "score": 43
+      },
+      "backlinks": {
+        "rdAvgDofollowTop10": 15,
+        "rdMinDofollowTop10": 0,
+        "refDomainsTrafficTotal": 110000,
+        "score": 40
+      },
+      "pagePower": {
+        "urAvgTop10": 19,
+        "score": 32
+      },
+      "intent": {
+        "mainIntent": "Commercial",
+        "serpLocked": false,
+        "branded": false,
+        "local": true,
+        "score": 55
+      },
+      "contentQualityScore": 52,
+      "uxTrustScore": 50,
+      "serpStabilityScore": 58,
+      "difficultyScore": 48,
+      "difficultyLabel": "medium",
+      "recommendedSiteType": "small_site"
+    }
+  },
+  {
+    "id": 10,
+    "keyword": "bad credit car loans bc",
+    "country": "ca",
+    "volume": 250,
+    "ahrefsDifficulty": 0,
+    "intentsRaw": "Informational,Non-branded,Non-local",
+    "analysis": {
+      "domainPower": {
+        "drAvgTop10": 37,
+        "drMinTop10": 10,
+        "drMaxTop10": 69,
+        "score": 41
+      },
+      "backlinks": {
+        "rdAvgDofollowTop10": 13,
+        "rdMinDofollowTop10": 0,
+        "refDomainsTrafficTotal": 100000,
+        "score": 38
+      },
+      "pagePower": {
+        "urAvgTop10": 18,
+        "score": 30
+      },
+      "intent": {
+        "mainIntent": "Commercial",
+        "serpLocked": false,
+        "branded": false,
+        "local": true,
+        "score": 54
+      },
+      "contentQualityScore": 50,
+      "uxTrustScore": 49,
+      "serpStabilityScore": 56,
+      "difficultyScore": 46,
+      "difficultyLabel": "medium",
+      "recommendedSiteType": "small_site"
+    }
+  }
+]
