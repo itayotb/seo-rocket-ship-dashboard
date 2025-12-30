@@ -1,4 +1,4 @@
-import { BulkCreationJob, BulkKeywordEntry } from '@/types/bulkWebsiteCreation';
+import { BulkCreationJob, BulkKeywordEntry, TemplateDistribution, RegistrarDistribution, LeadFormDistribution } from '@/types/bulkWebsiteCreation';
 import { CreatedWebsite } from '@/types/websiteCreation';
 
 export function calculateCompletionEstimate(
@@ -131,7 +131,7 @@ export function simulateWebsiteCreation(
 
 export function distributeLeadForms(
   keywords: BulkKeywordEntry[],
-  distribution: { leadFormId: string; percentage: number }[]
+  distribution: LeadFormDistribution[]
 ): Map<string, string> {
   const result = new Map<string, string>();
   const sortedDistribution = [...distribution].sort((a, b) => b.percentage - a.percentage);
@@ -146,9 +146,67 @@ export function distributeLeadForms(
     }
   }
   
-  // Assign remaining to first form
   while (currentIndex < keywords.length) {
     result.set(keywords[currentIndex].id, sortedDistribution[0]?.leadFormId || '');
+    currentIndex++;
+  }
+  
+  return result;
+}
+
+export function distributeTemplates(
+  keywords: BulkKeywordEntry[],
+  distribution: TemplateDistribution[]
+): Map<string, { templateId: string; templateName: string }> {
+  const result = new Map<string, { templateId: string; templateName: string }>();
+  const sortedDistribution = [...distribution].sort((a, b) => b.percentage - a.percentage);
+  
+  let currentIndex = 0;
+  
+  for (const dist of sortedDistribution) {
+    const count = Math.round((dist.percentage / 100) * keywords.length);
+    for (let i = 0; i < count && currentIndex < keywords.length; i++) {
+      result.set(keywords[currentIndex].id, { templateId: dist.templateId, templateName: dist.templateName });
+      currentIndex++;
+    }
+  }
+  
+  while (currentIndex < keywords.length) {
+    const first = sortedDistribution[0];
+    result.set(keywords[currentIndex].id, { 
+      templateId: first?.templateId || '', 
+      templateName: first?.templateName || '' 
+    });
+    currentIndex++;
+  }
+  
+  return result;
+}
+
+export function distributeRegistrars(
+  keywords: BulkKeywordEntry[],
+  distribution: RegistrarDistribution[]
+): Map<string, string> {
+  const result = new Map<string, string>();
+  
+  if (distribution.length === 0) {
+    return result;
+  }
+  
+  const sortedDistribution = [...distribution].sort((a, b) => b.percentage - a.percentage);
+  
+  let currentIndex = 0;
+  
+  for (const dist of sortedDistribution) {
+    const count = Math.round((dist.percentage / 100) * keywords.length);
+    for (let i = 0; i < count && currentIndex < keywords.length; i++) {
+      result.set(keywords[currentIndex].id, dist.registrarId);
+      currentIndex++;
+    }
+  }
+  
+  while (currentIndex < keywords.length) {
+    result.set(keywords[currentIndex].id, sortedDistribution[0]?.registrarId || '');
     currentIndex++;
   }
   

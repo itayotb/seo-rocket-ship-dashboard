@@ -50,7 +50,7 @@ const Index = () => {
   }, [websites, masterCategoryFilter]);
 
   const handleBulkCreate = async (data: any) => {
-    const job = await createJob();
+    const job = await createJob(data);
     startJob(job.id);
   };
 
