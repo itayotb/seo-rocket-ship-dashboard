@@ -57,7 +57,7 @@ const columnTooltips: Record<string, { title: string; description: string }> = {
   },
   score: {
     title: 'Overall Score',
-    description: 'Combined difficulty score (0-100) calculated from: Domain Power (25%) + Backlinks (25%) + Page Power (25%) + Intent (25%). Lower score = easier to rank.'
+    description: 'Combined difficulty score (0-100) calculated from: Domain Power (33%) + Backlinks (33%) + Page Power (33%). Lower score = easier to rank.'
   },
   drAvg: {
     title: 'DR Average (Top 10)',
@@ -86,10 +86,6 @@ const columnTooltips: Record<string, { title: string; description: string }> = {
   page: {
     title: 'Page Score',
     description: 'Difficulty score based on individual page strength (URL Rating). Indicates on-page optimization level of competitors. 0-100, lower = easier.'
-  },
-  intent: {
-    title: 'Intent Score',
-    description: 'Score based on search intent analysis (informational, commercial, transactional). Considers SERP features, brand presence, and local intent. 0-100, lower = better fit.'
   },
   siteType: {
     title: 'Recommended Site Type',
@@ -214,8 +210,8 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
     // Score filter
     if (scoreFilter !== 'all') {
       filtered = filtered.filter(r => {
-        const score = r.analysis.domainPower.score + r.analysis.backlinks.score + r.analysis.pagePower.score + r.analysis.intent.score;
-        const avgScore = score / 4;
+        const score = r.analysis.domainPower.score + r.analysis.backlinks.score + r.analysis.pagePower.score;
+        const avgScore = score / 3;
         if (scoreFilter === 'easy') return avgScore <= 40;
         if (scoreFilter === 'medium') return avgScore > 40 && avgScore <= 60;
         if (scoreFilter === 'hard') return avgScore > 60;
@@ -238,8 +234,8 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
           bVal = b.volume;
           break;
         case 'score':
-          aVal = (a.analysis.domainPower.score + a.analysis.backlinks.score + a.analysis.pagePower.score + a.analysis.intent.score) / 4;
-          bVal = (b.analysis.domainPower.score + b.analysis.backlinks.score + b.analysis.pagePower.score + b.analysis.intent.score) / 4;
+          aVal = (a.analysis.domainPower.score + a.analysis.backlinks.score + a.analysis.pagePower.score) / 3;
+          bVal = (b.analysis.domainPower.score + b.analysis.backlinks.score + b.analysis.pagePower.score) / 3;
           break;
         case 'drAvg':
           aVal = a.analysis.domainPower.drAvgTop10;
@@ -288,7 +284,6 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
       'Domain Score',
       'Backlinks Score',
       'Page Score',
-      'Intent Score',
       'UX Trust',
       'SERP Stability',
       'Site Type',
@@ -297,7 +292,7 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
     ];
 
     const rows = filteredAndSortedResults.map(r => {
-      const avgScore = Math.round((r.analysis.domainPower.score + r.analysis.backlinks.score + r.analysis.pagePower.score + r.analysis.intent.score) / 4);
+      const avgScore = Math.round((r.analysis.domainPower.score + r.analysis.backlinks.score + r.analysis.pagePower.score) / 3);
       return [
         r.keyword,
         r.volume,
@@ -311,7 +306,6 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
         r.analysis.domainPower.score,
         r.analysis.backlinks.score,
         r.analysis.pagePower.score,
-        r.analysis.intent.score,
         r.analysis.uxTrustScore,
         r.analysis.serpStabilityScore,
         getSiteTypeInfo(r.analysis.recommendedSiteType).label,
@@ -512,7 +506,6 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                   <StaticHeader label="Domain" tooltipKey="domain" />
                   <StaticHeader label="Backlinks" tooltipKey="backlinks" />
                   <StaticHeader label="Page" tooltipKey="page" />
-                  <StaticHeader label="Intent" tooltipKey="intent" />
                   <SortHeader label="Site Type" sortKeyValue="siteType" tooltipKey="siteType" />
                   <StaticHeader label="Flags" tooltipKey="flags" />
                 </TableRow>
@@ -520,7 +513,7 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
               <TableBody>
                 {filteredAndSortedResults.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={onCreateBulkWebsites ? 15 : 14} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={onCreateBulkWebsites ? 14 : 13} className="text-center text-muted-foreground py-8">
                       No results match your filters
                     </TableCell>
                   </TableRow>
@@ -528,7 +521,7 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                   filteredAndSortedResults.map((result) => {
                     const siteInfo = getSiteTypeInfo(result.analysis.recommendedSiteType);
                     const SiteIcon = siteInfo.icon;
-                    const avgScore = Math.round((result.analysis.domainPower.score + result.analysis.backlinks.score + result.analysis.pagePower.score + result.analysis.intent.score) / 4);
+                    const avgScore = Math.round((result.analysis.domainPower.score + result.analysis.backlinks.score + result.analysis.pagePower.score) / 3);
                     const isSelected = selectedIds.has(result.id);
 
                     return (
@@ -575,11 +568,6 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                         <TableCell>
                           <span className={getScoreColor(result.analysis.pagePower.score)}>
                             {result.analysis.pagePower.score}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <span className={getScoreColor(result.analysis.intent.score)}>
-                            {result.analysis.intent.score}
                           </span>
                         </TableCell>
                         <TableCell>

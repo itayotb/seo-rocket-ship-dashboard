@@ -69,7 +69,6 @@ export interface IntentAnalysis {
   serpLocked: boolean;
   branded: boolean;
   local: boolean;
-  score: number;
 }
 
 export interface KeywordAnalysis {
