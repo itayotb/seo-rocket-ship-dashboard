@@ -22,12 +22,6 @@
         "urAvgTop10": 35.0,
         "score": 35.0
       },
-      "intent": {
-        "mainIntent": "Commercial",
-        "branded": false,
-        "local": false,
-        "score": 80.0
-      },
       "serpStabilityScore": 75.0,
       "difficultyScore": 59.1,
       "difficultyLabel": "challenging",
@@ -56,12 +50,6 @@
       "pagePower": {
         "urAvgTop10": 33.0,
         "score": 33.0
-      },
-      "intent": {
-        "mainIntent": "Commercial",
-        "branded": false,
-        "local": false,
-        "score": 80.0
       },
       "serpStabilityScore": 71.0,
       "difficultyScore": 56.7,
@@ -92,12 +80,6 @@
         "urAvgTop10": 31.0,
         "score": 31.0
       },
-      "intent": {
-        "mainIntent": "Commercial",
-        "branded": false,
-        "local": false,
-        "score": 80.0
-      },
       "serpStabilityScore": 67.0,
       "difficultyScore": 54.2,
       "difficultyLabel": "challenging",
@@ -126,12 +108,6 @@
       "pagePower": {
         "urAvgTop10": 29.0,
         "score": 29.0
-      },
-      "intent": {
-        "mainIntent": "Commercial",
-        "branded": false,
-        "local": false,
-        "score": 80.0
       },
       "serpStabilityScore": 63.0,
       "difficultyScore": 51.7,
@@ -162,12 +138,6 @@
         "urAvgTop10": 27.0,
         "score": 27.0
       },
-      "intent": {
-        "mainIntent": "Commercial",
-        "branded": false,
-        "local": false,
-        "score": 80.0
-      },
       "serpStabilityScore": 59.0,
       "difficultyScore": 49.2,
       "difficultyLabel": "medium",
@@ -196,12 +166,6 @@
       "pagePower": {
         "urAvgTop10": 25.0,
         "score": 25.0
-      },
-      "intent": {
-        "mainIntent": "Commercial",
-        "branded": false,
-        "local": false,
-        "score": 80.0
       },
       "serpStabilityScore": 55.0,
       "difficultyScore": 46.7,
@@ -232,12 +196,6 @@
         "urAvgTop10": 23.0,
         "score": 23.0
       },
-      "intent": {
-        "mainIntent": "Commercial",
-        "branded": false,
-        "local": false,
-        "score": 80.0
-      },
       "serpStabilityScore": 51.0,
       "difficultyScore": 44.2,
       "difficultyLabel": "medium",
@@ -266,12 +224,6 @@
       "pagePower": {
         "urAvgTop10": 21.0,
         "score": 21.0
-      },
-      "intent": {
-        "mainIntent": "Commercial",
-        "branded": false,
-        "local": true,
-        "score": 85.0
       },
       "serpStabilityScore": 47.0,
       "difficultyScore": 43.0,
@@ -302,12 +254,6 @@
         "urAvgTop10": 19.0,
         "score": 19.0
       },
-      "intent": {
-        "mainIntent": "Commercial",
-        "branded": false,
-        "local": true,
-        "score": 85.0
-      },
       "serpStabilityScore": 43.0,
       "difficultyScore": 40.8,
       "difficultyLabel": "medium",
@@ -336,12 +282,6 @@
       "pagePower": {
         "urAvgTop10": 17.0,
         "score": 17.0
-      },
-      "intent": {
-        "mainIntent": "Informational",
-        "branded": false,
-        "local": true,
-        "score": 70.0
       },
       "serpStabilityScore": 40.0,
       "difficultyScore": 33.7,
