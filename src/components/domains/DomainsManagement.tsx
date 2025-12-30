@@ -1,15 +1,25 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useDomains } from '@/hooks/useDomains';
 import { Domain } from '@/types/domain';
 import DomainsHeader from './DomainsHeader';
 import DomainsList from './DomainsList';
 import DomainWizard from './DomainWizard';
 
-const DomainsManagement = () => {
+interface DomainsManagementProps {
+  masterCategoryFilter: string;
+}
+
+const DomainsManagement: React.FC<DomainsManagementProps> = ({ masterCategoryFilter }) => {
   const [showWizard, setShowWizard] = useState(false);
   const [editingDomain, setEditingDomain] = useState<Domain | undefined>(undefined);
   const { domains, isLoading, addDomain, updateDomain, deleteDomain, checkDomainStatus } = useDomains();
+
+  // Filter domains by master category
+  const filteredDomains = useMemo(() => {
+    if (masterCategoryFilter === 'all') return domains;
+    return domains.filter(domain => domain.category === masterCategoryFilter);
+  }, [domains, masterCategoryFilter]);
 
   const handleAddDomain = () => {
     setEditingDomain(undefined);
@@ -29,12 +39,12 @@ const DomainsManagement = () => {
   return (
     <div className="space-y-6">
       <DomainsHeader 
-        domainCount={domains.length}
+        domainCount={filteredDomains.length}
         onAddDomain={handleAddDomain}
       />
       
       <DomainsList
-        domains={domains}
+        domains={filteredDomains}
         isLoading={isLoading}
         onUpdateDomain={updateDomain}
         onDeleteDomain={deleteDomain}

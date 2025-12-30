@@ -83,7 +83,7 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
   const renderContent = () => {
     switch (activeSection) {
       case 'templates':
-        return <TemplateGallery />;
+        return <TemplateGallery masterCategoryFilter={masterCategoryFilter} />;
       case 'websites':
         return (
           <div className="space-y-6">
@@ -121,11 +121,11 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
           </div>
         );
       case 'domains':
-        return <DomainsManagement />;
+        return <DomainsManagement masterCategoryFilter={masterCategoryFilter} />;
       case 'analytics':
         return <AnalyticsDashboard masterCategoryFilter={masterCategoryFilter} />;
       case 'reports':
-        return <ReportsDashboard />;
+        return <ReportsDashboard masterCategoryFilter={masterCategoryFilter} />;
       case 'cloudflare':
         return <CloudflareSettings />;
       case 'tools':

@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Template } from '@/components/templates/TemplateGallery';
 import { getAllCategories, TemplateCategory } from '@/utils/templateCategories';
 
@@ -10,6 +10,7 @@ export const useTemplateGallery = () => {
   const [isApplyOpen, setIsApplyOpen] = useState(false);
   const [isCategoryManagerOpen, setIsCategoryManagerOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [masterFilter, setMasterFilter] = useState('all');
   const [categories, setCategories] = useState<TemplateCategory[]>(getAllCategories());
 
   const templates: Template[] = [
@@ -86,9 +87,40 @@ export const useTemplateGallery = () => {
     ...templates.map(template => template.category)
   ]))];
 
-  const filteredTemplates = selectedCategory === 'All' 
-    ? templates 
-    : templates.filter(template => template.category === selectedCategory);
+  // Filter by master category first, then by selected category
+  const filteredTemplates = useMemo(() => {
+    let filtered = templates;
+    
+    // Apply master filter (maps to template categories)
+    if (masterFilter !== 'all') {
+      const categoryMap: Record<string, string[]> = {
+        'business': ['Business'],
+        'ecommerce': ['E-commerce'],
+        'blog': ['Blog'],
+        'portfolio': ['Portfolio'],
+        'health': ['Health'],
+        'restaurant': ['Local Business'],
+        'technology': ['Business'],
+        'landing-page': ['Landing Page'],
+        'educational': ['Educational'],
+        'nonprofit': ['Non-profit'],
+      };
+      const matchingCategories = categoryMap[masterFilter] || [masterFilter];
+      filtered = filtered.filter(t => 
+        matchingCategories.some(cat => 
+          t.category.toLowerCase().includes(cat.toLowerCase()) ||
+          cat.toLowerCase().includes(t.category.toLowerCase())
+        )
+      );
+    }
+    
+    // Then apply local category filter
+    if (selectedCategory !== 'All') {
+      filtered = filtered.filter(t => t.category === selectedCategory);
+    }
+    
+    return filtered;
+  }, [templates, masterFilter, selectedCategory]);
 
   const handleCategoryAdded = (newCategory: TemplateCategory) => {
     setCategories(getAllCategories());
@@ -111,6 +143,8 @@ export const useTemplateGallery = () => {
     setIsCategoryManagerOpen,
     selectedCategory,
     setSelectedCategory,
+    masterFilter,
+    setMasterFilter,
     categories,
     templates,
     availableCategories,
