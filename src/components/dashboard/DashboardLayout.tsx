@@ -18,6 +18,8 @@ interface DashboardLayoutProps {
   onDeleteWebsiteIdChange: (id: string | null) => void;
   websites: Website[];
   onConfirmDeleteWebsite: () => void;
+  masterCategoryFilter: string;
+  onMasterCategoryFilterChange: (category: string) => void;
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
@@ -31,7 +33,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   deleteWebsiteId,
   onDeleteWebsiteIdChange,
   websites,
-  onConfirmDeleteWebsite
+  onConfirmDeleteWebsite,
+  masterCategoryFilter,
+  onMasterCategoryFilterChange
 }) => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col md:flex-row w-full">
@@ -40,7 +44,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <div className="flex-1 flex flex-col">
         {/* Desktop Header - Hidden on mobile since mobile has its own header in Navigation */}
         <div className="hidden md:block">
-          <DashboardHeader />
+          <DashboardHeader 
+            masterCategoryFilter={masterCategoryFilter}
+            onMasterCategoryFilterChange={onMasterCategoryFilterChange}
+          />
         </div>
         
         <main className="flex-1 p-4 md:p-6">

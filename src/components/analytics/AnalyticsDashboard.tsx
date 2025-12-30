@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AnalyticsKPICard from './AnalyticsKPICard';
 import PerformersTable from './PerformersTable';
@@ -9,12 +9,24 @@ import AnalyticsChart from './AnalyticsChart';
 import { getAnalyticsDashboardData } from '@/utils/analytics';
 import { AnalyticsFilters } from '@/types/analytics';
 
-const AnalyticsDashboard: React.FC = () => {
+interface AnalyticsDashboardProps {
+  masterCategoryFilter: string;
+}
+
+const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ masterCategoryFilter }) => {
   const [filters, setFilters] = useState<AnalyticsFilters>({
     timeframe: '30d',
-    category: 'all',
+    category: masterCategoryFilter,
     performanceLevel: 'all'
   });
+
+  // Sync with master category filter
+  useEffect(() => {
+    setFilters(prev => ({
+      ...prev,
+      category: masterCategoryFilter
+    }));
+  }, [masterCategoryFilter]);
 
   // Memoize dashboard data to avoid unnecessary recalculations
   const dashboardData = useMemo(() => {
