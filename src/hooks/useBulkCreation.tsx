@@ -1,14 +1,14 @@
 import { useState, useCallback } from 'react';
 import { BulkCreationJob, BulkCreationData, BulkKeywordEntry } from '@/types/bulkWebsiteCreation';
-import { simulateWebsiteCreation, distributeLeadForms } from '@/utils/bulkCreationMock';
+import { simulateWebsiteCreation, distributeLeadForms, distributeTemplates, distributeRegistrars } from '@/utils/bulkCreationMock';
 import { useToast } from '@/hooks/use-toast';
 
 const initialData: BulkCreationData = {
   keywords: [],
   domainMode: 'auto',
-  tld: '.com',
-  templateId: '',
-  templateName: '',
+  defaultTld: '.com',
+  templateDistribution: [],
+  registrarDistribution: [],
   category: 'all',
   leadFormDistribution: [],
   scheduling: { mode: 'immediate' },
@@ -28,21 +28,21 @@ export function useBulkCreation() {
     setCurrentData(initialData);
   }, []);
 
-  const createJob = useCallback(async (): Promise<BulkCreationJob> => {
-    const validKeywords = currentData.keywords.filter((kw) => kw.keyword.trim());
+  const createJob = useCallback(async (data: BulkCreationData): Promise<BulkCreationJob> => {
+    const validKeywords = data.keywords.filter((kw) => kw.keyword.trim());
     
     const job: BulkCreationJob = {
       id: `job-${Date.now()}`,
       name: `Bulk Job - ${validKeywords.length} sites`,
       status: 'pending',
       keywords: validKeywords,
-      domainMode: currentData.domainMode,
-      tld: currentData.tld,
-      templateId: currentData.templateId,
-      templateName: currentData.templateName,
-      category: currentData.category,
-      leadFormDistribution: currentData.leadFormDistribution,
-      scheduling: currentData.scheduling,
+      domainMode: data.domainMode,
+      defaultTld: data.defaultTld,
+      templateDistribution: data.templateDistribution,
+      registrarDistribution: data.registrarDistribution,
+      category: data.category,
+      leadFormDistribution: data.leadFormDistribution,
+      scheduling: data.scheduling,
       createdAt: new Date().toISOString(),
       progress: { completed: 0, total: validKeywords.length },
       createdWebsites: [],
@@ -50,7 +50,7 @@ export function useBulkCreation() {
 
     setJobs((prev) => [job, ...prev]);
     return job;
-  }, [currentData]);
+  }, []);
 
   const startJob = useCallback(async (jobId: string) => {
     setJobs((prev) =>
@@ -63,10 +63,13 @@ export function useBulkCreation() {
     if (!job) return;
 
     const leadFormMap = distributeLeadForms(job.keywords, job.leadFormDistribution);
+    const templateMap = distributeTemplates(job.keywords, job.templateDistribution);
+    const registrarMap = distributeRegistrars(job.keywords, job.registrarDistribution);
 
     for (let i = 0; i < job.keywords.length; i++) {
       const kw = job.keywords[i];
       const leadFormId = leadFormMap.get(kw.id) || '';
+      const templateInfo = templateMap.get(kw.id) || { templateId: '', templateName: '' };
 
       setJobs((prev) =>
         prev.map((j) =>
@@ -77,7 +80,7 @@ export function useBulkCreation() {
       );
 
       const website = await simulateWebsiteCreation(
-        kw, job.templateId, job.templateName, job.category, leadFormId
+        kw, templateInfo.templateId, templateInfo.templateName, job.category, leadFormId
       );
 
       setJobs((prev) =>

@@ -54,8 +54,8 @@ const BulkJobCard = ({ job, onPause, onResume, onCancel }: BulkJobCardProps) => 
 
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div>
-            <span className="text-muted-foreground">Template:</span>
-            <p className="font-medium truncate">{job.templateName}</p>
+            <span className="text-muted-foreground">Templates:</span>
+            <p className="font-medium truncate">{job.templateDistribution.length} selected</p>
           </div>
           <div>
             <span className="text-muted-foreground">Created:</span>

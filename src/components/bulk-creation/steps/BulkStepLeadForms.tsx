@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, PieChart } from 'lucide-react';
+import { AlertCircle, PieChart, Search } from 'lucide-react';
 import { LeadForm } from '@/types/leadForm';
 import { LeadFormDistribution } from '@/types/bulkWebsiteCreation';
 
@@ -20,8 +21,50 @@ const BulkStepLeadForms = ({
   totalKeywords,
   onDistributionChange,
 }: BulkStepLeadFormsProps) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
   const totalPercentage = distribution.reduce((sum, d) => sum + d.percentage, 0);
   const isValid = totalPercentage === 100;
+
+  // Get unique categories from lead forms
+  const categories = useMemo(() => {
+    const cats = new Set(leadForms.map((f) => f.category).filter(Boolean));
+    return Array.from(cats);
+  }, [leadForms]);
+
+  // Filter lead forms by search and category
+  const filteredLeadForms = useMemo(() => {
+    let filtered = leadForms;
+
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter((f) => f.category === selectedCategory);
+    }
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (f) =>
+          f.name.toLowerCase().includes(query) ||
+          f.category?.toLowerCase().includes(query)
+      );
+    }
+
+    return filtered;
+  }, [leadForms, selectedCategory, searchQuery]);
+
+  // Group filtered forms by category
+  const groupedForms = useMemo(() => {
+    const groups: Record<string, LeadForm[]> = {};
+    filteredLeadForms.forEach((form) => {
+      const category = form.category || 'Uncategorized';
+      if (!groups[category]) {
+        groups[category] = [];
+      }
+      groups[category].push(form);
+    });
+    return groups;
+  }, [filteredLeadForms]);
 
   const handlePercentageChange = (leadFormId: string, percentage: number) => {
     const existingIndex = distribution.findIndex((d) => d.leadFormId === leadFormId);
@@ -56,7 +99,6 @@ const BulkStepLeadForms = ({
     return Math.round((percentage / 100) * totalKeywords);
   };
 
-  // Colors for the pie chart visualization
   const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
   return (
@@ -68,7 +110,7 @@ const BulkStepLeadForms = ({
         </p>
       </div>
 
-      {!isValid && (
+      {!isValid && distribution.length > 0 && (
         <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 text-destructive">
           <AlertCircle className="h-4 w-4" />
           <span className="text-sm">
@@ -77,51 +119,100 @@ const BulkStepLeadForms = ({
         </div>
       )}
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          {leadForms.map((form, index) => {
-            const percentage = getDistributionForForm(form.id);
-            const sitesCount = getSitesCount(percentage);
-            
+      {/* Search and Filter */}
+      <div className="space-y-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search lead forms..."
+            className="pl-9"
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <Badge
+            variant={selectedCategory === 'all' ? 'default' : 'outline'}
+            className="cursor-pointer"
+            onClick={() => setSelectedCategory('all')}
+          >
+            All ({leadForms.length})
+          </Badge>
+          {categories.map((cat) => {
+            const count = leadForms.filter((f) => f.category === cat).length;
             return (
-              <Card key={form.id}>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: colors[index % colors.length] }}
-                      />
-                      {form.name}
-                    </span>
-                    <Badge variant={percentage > 0 ? 'default' : 'outline'}>
-                      {percentage}%
-                    </Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Slider
-                    value={[percentage]}
-                    onValueChange={([value]) => handlePercentageChange(form.id, value)}
-                    max={100}
-                    step={5}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>0%</span>
-                    <span className="font-medium">
-                      {sitesCount} site{sitesCount !== 1 ? 's' : ''}
-                    </span>
-                    <span>100%</span>
-                  </div>
-                </CardContent>
-              </Card>
+              <Badge
+                key={cat}
+                variant={selectedCategory === cat ? 'default' : 'outline'}
+                className="cursor-pointer"
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat} ({count})
+              </Badge>
             );
           })}
+        </div>
+      </div>
 
-          {leadForms.length === 0 && (
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="space-y-4 max-h-[400px] overflow-auto pr-2">
+          {Object.entries(groupedForms).map(([category, forms]) => (
+            <div key={category} className="space-y-3">
+              <h4 className="text-sm font-medium text-muted-foreground sticky top-0 bg-background py-1">
+                {category} ({forms.length})
+              </h4>
+              {forms.map((form, index) => {
+                const percentage = getDistributionForForm(form.id);
+                const sitesCount = getSitesCount(percentage);
+                const colorIndex = distribution.findIndex((d) => d.leadFormId === form.id);
+                
+                return (
+                  <Card key={form.id}>
+                    <CardHeader className="pb-2 pt-3 px-4">
+                      <CardTitle className="text-sm flex items-center justify-between">
+                        <span className="flex items-center gap-2">
+                          {percentage > 0 && (
+                            <div
+                              className="w-3 h-3 rounded-full"
+                              style={{ backgroundColor: colors[colorIndex % colors.length] }}
+                            />
+                          )}
+                          <span className="line-clamp-1">{form.name}</span>
+                        </span>
+                        <Badge variant={percentage > 0 ? 'default' : 'outline'} className="ml-2">
+                          {percentage}%
+                        </Badge>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2 pb-3 px-4">
+                      <Slider
+                        value={[percentage]}
+                        onValueChange={([value]) => handlePercentageChange(form.id, value)}
+                        max={100}
+                        step={5}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <Badge variant="outline" className="text-xs">
+                          {form.category}
+                        </Badge>
+                        <span className="font-medium">
+                          {sitesCount} site{sitesCount !== 1 ? 's' : ''}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          ))}
+
+          {filteredLeadForms.length === 0 && (
             <div className="text-center py-8 text-muted-foreground border rounded-lg">
-              No lead forms available. Create lead forms first.
+              {leadForms.length === 0 
+                ? 'No lead forms available. Create lead forms first.'
+                : 'No lead forms match your search.'}
             </div>
           )}
         </div>
@@ -138,6 +229,7 @@ const BulkStepLeadForms = ({
               <div className="space-y-3">
                 {distribution.filter((d) => d.percentage > 0).map((d, index) => {
                   const sitesCount = getSitesCount(d.percentage);
+                  const form = leadForms.find((f) => f.id === d.leadFormId);
                   return (
                     <div key={d.leadFormId} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -145,10 +237,17 @@ const BulkStepLeadForms = ({
                           className="w-3 h-3 rounded-full"
                           style={{ backgroundColor: colors[index % colors.length] }}
                         />
-                        <span className="text-sm">{d.leadFormName}</span>
+                        <div>
+                          <span className="text-sm">{d.leadFormName}</span>
+                          {form?.category && (
+                            <span className="text-xs text-muted-foreground ml-2">
+                              ({form.category})
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <span className="text-sm font-medium">
-                        {sitesCount} sites ({d.percentage}%)
+                        {sitesCount} ({d.percentage}%)
                       </span>
                     </div>
                   );
@@ -173,9 +272,9 @@ const BulkStepLeadForms = ({
           </Card>
 
           <div className="text-sm text-muted-foreground space-y-1">
-            <p>• Sites are distributed based on percentages</p>
-            <p>• Rounding may cause slight variations</p>
-            <p>• At least one form must have a percentage</p>
+            <p>• Search forms by name or category</p>
+            <p>• Filter by category badges</p>
+            <p>• Total distribution must equal 100%</p>
           </div>
         </div>
       </div>

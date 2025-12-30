@@ -1,65 +1,134 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, Loader2, RefreshCw } from 'lucide-react';
-import { BulkKeywordEntry, TLD_OPTIONS } from '@/types/bulkWebsiteCreation';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Progress } from '@/components/ui/progress';
+import { CheckCircle, XCircle, Loader2, RefreshCw, Server } from 'lucide-react';
+import { BulkKeywordEntry, TLD_OPTIONS, REGISTRAR_OPTIONS, RegistrarDistribution } from '@/types/bulkWebsiteCreation';
 import { findAvailableDomain, generateDomainFromKeyword } from '@/utils/bulkDomainGenerator';
 
 interface BulkStepDomainsProps {
   keywords: BulkKeywordEntry[];
   domainMode: 'manual' | 'auto';
-  tld: string;
+  defaultTld: string;
+  registrarDistribution: RegistrarDistribution[];
   onDomainModeChange: (mode: 'manual' | 'auto') => void;
-  onTldChange: (tld: string) => void;
+  onDefaultTldChange: (tld: string) => void;
   onKeywordsChange: (keywords: BulkKeywordEntry[]) => void;
+  onRegistrarDistributionChange: (distribution: RegistrarDistribution[]) => void;
 }
 
 const BulkStepDomains = ({
   keywords,
   domainMode,
-  tld,
+  defaultTld,
+  registrarDistribution,
   onDomainModeChange,
-  onTldChange,
+  onDefaultTldChange,
   onKeywordsChange,
+  onRegistrarDistributionChange,
 }: BulkStepDomainsProps) => {
-  const [isChecking, setIsChecking] = useState(false);
-  const [checkingId, setCheckingId] = useState<string | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchProgress, setSearchProgress] = useState({ found: 0, total: 0 });
+  const abortRef = useRef(false);
 
-  const generateAllDomains = async () => {
-    setIsChecking(true);
-    
-    const updatedKeywords = [...keywords];
-    
-    for (let i = 0; i < updatedKeywords.length; i++) {
-      const kw = updatedKeywords[i];
-      setCheckingId(kw.id);
-      
-      const result = await findAvailableDomain(kw.keyword, tld);
-      updatedKeywords[i] = {
-        ...kw,
-        domain: result.domain,
-        domainStatus: result.available ? 'available' : 'taken',
-      };
-      
-      onKeywordsChange([...updatedKeywords]);
-    }
-    
-    setCheckingId(null);
-    setIsChecking(false);
+  const availableCount = keywords.filter((kw) => kw.domainStatus === 'available').length;
+  const takenCount = keywords.filter((kw) => kw.domainStatus === 'taken').length;
+  const totalRegistrarPercentage = registrarDistribution.reduce((sum, d) => sum + d.percentage, 0);
+
+  const updateKeywordTld = (keywordId: string, tld: string) => {
+    onKeywordsChange(
+      keywords.map((kw) =>
+        kw.id === keywordId
+          ? { ...kw, tld, domain: generateDomainFromKeyword(kw.keyword, tld), domainStatus: 'pending' as const }
+          : kw
+      )
+    );
   };
 
-  const regenerateDomain = async (keywordId: string) => {
+  const applyDefaultTldToAll = () => {
+    onKeywordsChange(
+      keywords.map((kw) => ({
+        ...kw,
+        tld: defaultTld,
+        domain: generateDomainFromKeyword(kw.keyword, defaultTld),
+        domainStatus: 'pending' as const,
+      }))
+    );
+  };
+
+  const findAllAvailable = useCallback(async () => {
+    setIsSearching(true);
+    abortRef.current = false;
+    setSearchProgress({ found: 0, total: keywords.length });
+
+    const updatedKeywords = [...keywords];
+    let foundCount = 0;
+
+    for (let i = 0; i < updatedKeywords.length; i++) {
+      if (abortRef.current) break;
+
+      const kw = updatedKeywords[i];
+      if (kw.domainStatus === 'available') {
+        foundCount++;
+        setSearchProgress({ found: foundCount, total: keywords.length });
+        continue;
+      }
+
+      updatedKeywords[i] = { ...kw, domainStatus: 'searching' };
+      onKeywordsChange([...updatedKeywords]);
+
+      let attempts = 0;
+      let found = false;
+
+      while (!found && attempts < 5 && !abortRef.current) {
+        const result = await findAvailableDomain(kw.keyword, kw.tld || defaultTld);
+        if (result.available) {
+          updatedKeywords[i] = {
+            ...kw,
+            domain: result.domain,
+            domainStatus: 'available',
+          };
+          found = true;
+          foundCount++;
+        } else {
+          attempts++;
+        }
+      }
+
+      if (!found) {
+        updatedKeywords[i] = {
+          ...kw,
+          domain: updatedKeywords[i].domain,
+          domainStatus: 'taken',
+        };
+      }
+
+      onKeywordsChange([...updatedKeywords]);
+      setSearchProgress({ found: foundCount, total: keywords.length });
+    }
+
+    setIsSearching(false);
+  }, [keywords, defaultTld, onKeywordsChange]);
+
+  const regenerateSingleDomain = async (keywordId: string) => {
     const kw = keywords.find((k) => k.id === keywordId);
     if (!kw) return;
-    
-    setCheckingId(keywordId);
-    
-    const result = await findAvailableDomain(kw.keyword, tld);
-    
+
+    onKeywordsChange(
+      keywords.map((k) =>
+        k.id === keywordId ? { ...k, domainStatus: 'searching' as const } : k
+      )
+    );
+
+    const result = await findAvailableDomain(kw.keyword, kw.tld || defaultTld);
+
     onKeywordsChange(
       keywords.map((k) =>
         k.id === keywordId
@@ -67,30 +136,53 @@ const BulkStepDomains = ({
           : k
       )
     );
-    
-    setCheckingId(null);
   };
 
-  // Auto-generate preview domains when TLD changes
-  useEffect(() => {
-    if (domainMode === 'auto') {
-      const previewKeywords = keywords.map((kw) => ({
-        ...kw,
-        domain: generateDomainFromKeyword(kw.keyword, tld),
-        domainStatus: 'pending' as const,
-      }));
-      onKeywordsChange(previewKeywords);
+  const handleRegistrarToggle = (registrarId: string, checked: boolean) => {
+    if (checked) {
+      const registrar = REGISTRAR_OPTIONS.find((r) => r.value === registrarId);
+      if (registrar) {
+        onRegistrarDistributionChange([
+          ...registrarDistribution,
+          { registrarId, registrarName: registrar.label, percentage: 0 },
+        ]);
+      }
+    } else {
+      onRegistrarDistributionChange(
+        registrarDistribution.filter((d) => d.registrarId !== registrarId)
+      );
     }
-  }, [tld, domainMode]);
+  };
+
+  const handleRegistrarPercentageChange = (registrarId: string, percentage: number) => {
+    onRegistrarDistributionChange(
+      registrarDistribution.map((d) =>
+        d.registrarId === registrarId ? { ...d, percentage } : d
+      )
+    );
+  };
+
+  useEffect(() => {
+    if (domainMode === 'auto' && keywords.length > 0) {
+      const needsUpdate = keywords.some((kw) => !kw.tld);
+      if (needsUpdate) {
+        onKeywordsChange(
+          keywords.map((kw) => ({
+            ...kw,
+            tld: kw.tld || defaultTld,
+            domain: kw.domain || generateDomainFromKeyword(kw.keyword, kw.tld || defaultTld),
+          }))
+        );
+      }
+    }
+  }, [domainMode]);
 
   const getStatusBadge = (status: BulkKeywordEntry['domainStatus'], id: string) => {
-    if (checkingId === id) {
-      return <Badge variant="secondary"><Loader2 className="h-3 w-3 animate-spin mr-1" /> Checking</Badge>;
-    }
-    
     switch (status) {
+      case 'searching':
+        return <Badge variant="secondary"><Loader2 className="h-3 w-3 animate-spin mr-1" /> Searching</Badge>;
       case 'available':
-        return <Badge variant="default" className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" /> Available</Badge>;
+        return <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" /> Available</Badge>;
       case 'taken':
         return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" /> Taken</Badge>;
       case 'generated':
@@ -105,7 +197,7 @@ const BulkStepDomains = ({
       <div>
         <h3 className="text-lg font-semibold">Domain Configuration</h3>
         <p className="text-sm text-muted-foreground">
-          Choose how domains will be assigned to each website.
+          Configure domains and registrar distribution for each website.
         </p>
       </div>
 
@@ -125,12 +217,12 @@ const BulkStepDomains = ({
       </div>
 
       {domainMode === 'auto' && (
-        <div className="space-y-4">
-          <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
+        <div className="space-y-6">
+          <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg flex-wrap">
             <div className="flex items-center gap-2">
-              <Label>TLD (Top-Level Domain):</Label>
-              <Select value={tld} onValueChange={onTldChange}>
-                <SelectTrigger className="w-48">
+              <Label>Default TLD:</Label>
+              <Select value={defaultTld} onValueChange={onDefaultTldChange}>
+                <SelectTrigger className="w-40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -142,33 +234,60 @@ const BulkStepDomains = ({
                 </SelectContent>
               </Select>
             </div>
+            <Button variant="outline" size="sm" onClick={applyDefaultTldToAll}>
+              Apply to All
+            </Button>
             <Button
-              onClick={generateAllDomains}
-              disabled={isChecking || keywords.length === 0}
+              onClick={findAllAvailable}
+              disabled={isSearching || keywords.length === 0}
             >
-              {isChecking ? (
+              {isSearching ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Checking...
+                  Searching...
                 </>
               ) : (
                 <>
                   <RefreshCw className="h-4 w-4 mr-2" />
-                  Check All Domains
+                  Find All Available
                 </>
               )}
             </Button>
           </div>
 
-          <div className="border rounded-lg">
+          {isSearching && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Finding available domains...</span>
+                <span className="font-medium">{searchProgress.found}/{searchProgress.total} found</span>
+              </div>
+              <Progress value={(searchProgress.found / searchProgress.total) * 100} className="h-2" />
+              <p className="text-xs text-muted-foreground">You can continue to the next step while searching runs in background</p>
+            </div>
+          )}
+
+          <div className="flex gap-4 text-sm">
+            <Badge variant="outline" className="bg-green-500/10">
+              <CheckCircle className="h-3 w-3 mr-1 text-green-500" /> {availableCount} Available
+            </Badge>
+            <Badge variant="outline" className="bg-destructive/10">
+              <XCircle className="h-3 w-3 mr-1 text-destructive" /> {takenCount} Taken
+            </Badge>
+            <Badge variant="outline">
+              {keywords.length - availableCount - takenCount} Pending
+            </Badge>
+          </div>
+
+          <div className="border rounded-lg max-h-[300px] overflow-auto">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-12">#</TableHead>
                   <TableHead>Keyword</TableHead>
+                  <TableHead className="w-28">TLD</TableHead>
                   <TableHead>Generated Domain</TableHead>
-                  <TableHead className="w-32">Status</TableHead>
-                  <TableHead className="w-16"></TableHead>
+                  <TableHead className="w-28">Status</TableHead>
+                  <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -177,7 +296,24 @@ const BulkStepDomains = ({
                     <TableCell className="font-medium text-muted-foreground">
                       {index + 1}
                     </TableCell>
-                    <TableCell>{kw.keyword || <span className="text-muted-foreground italic">Empty keyword</span>}</TableCell>
+                    <TableCell>{kw.keyword || <span className="text-muted-foreground italic">Empty</span>}</TableCell>
+                    <TableCell>
+                      <Select
+                        value={kw.tld || defaultTld}
+                        onValueChange={(value) => updateKeywordTld(kw.id, value)}
+                      >
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TLD_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.value}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
                     <TableCell className="font-mono text-sm">
                       {kw.domain || '-'}
                     </TableCell>
@@ -186,8 +322,8 @@ const BulkStepDomains = ({
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => regenerateDomain(kw.id)}
-                        disabled={checkingId === kw.id || !kw.keyword}
+                        onClick={() => regenerateSingleDomain(kw.id)}
+                        disabled={kw.domainStatus === 'searching' || !kw.keyword}
                       >
                         <RefreshCw className="h-4 w-4" />
                       </Button>
@@ -198,11 +334,61 @@ const BulkStepDomains = ({
             </Table>
           </div>
 
-          <div className="text-sm text-muted-foreground">
-            <p>• Domains are generated by removing spaces and special characters from keywords</p>
-            <p>• If a domain is taken, alternatives with dashes will be tried</p>
-            <p>• This is a demo - actual domain availability would require a real API</p>
-          </div>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Server className="h-4 w-4" />
+                Registrar Distribution
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Select registrars and distribute domains across them.
+              </p>
+              
+              <div className="space-y-3">
+                {REGISTRAR_OPTIONS.map((registrar) => {
+                  const dist = registrarDistribution.find((d) => d.registrarId === registrar.value);
+                  const isSelected = !!dist;
+                  const percentage = dist?.percentage || 0;
+
+                  return (
+                    <div key={registrar.value} className="flex items-center gap-4">
+                      <Checkbox
+                        id={registrar.value}
+                        checked={isSelected}
+                        onCheckedChange={(checked) => handleRegistrarToggle(registrar.value, !!checked)}
+                      />
+                      <Label htmlFor={registrar.value} className="w-40 cursor-pointer">
+                        {registrar.label}
+                      </Label>
+                      {isSelected && (
+                        <>
+                          <Slider
+                            value={[percentage]}
+                            onValueChange={([value]) => handleRegistrarPercentageChange(registrar.value, value)}
+                            max={100}
+                            step={5}
+                            className="flex-1"
+                          />
+                          <span className="w-16 text-right text-sm font-medium">{percentage}%</span>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {registrarDistribution.length > 0 && (
+                <div className="pt-3 border-t flex justify-between">
+                  <span className="text-sm font-medium">Total</span>
+                  <span className={`text-sm font-medium ${totalRegistrarPercentage === 100 ? 'text-green-500' : 'text-destructive'}`}>
+                    {totalRegistrarPercentage}%
+                  </span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       )}
 
@@ -210,7 +396,6 @@ const BulkStepDomains = ({
         <div className="p-8 text-center border rounded-lg bg-muted/30">
           <p className="text-muted-foreground">
             Manual domain selection will be available in the final step.
-            You'll be able to choose from your existing domains.
           </p>
         </div>
       )}
