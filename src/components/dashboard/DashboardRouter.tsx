@@ -8,6 +8,7 @@ import CloudflareSettings from '@/components/cloudflare/CloudflareSettings';
 import DomainsManagement from '@/components/domains/DomainsManagement';
 import ReportsDashboard from '@/components/reports/ReportsDashboard';
 import LeadFormsManagement from '@/components/leadforms/LeadFormsManagement';
+import CredentialsManagement from '@/components/credentials/CredentialsManagement';
 import CreateWebsiteButton from '@/components/dashboard/CreateWebsiteButton';
 import { 
   ToolsPlaceholder, 
@@ -16,6 +17,7 @@ import {
 import { Website } from '@/types/website';
 import { CreatedWebsite } from '@/types/websiteCreation';
 import { LeadForm } from '@/types/leadForm';
+import { Credential } from '@/types/credential';
 
 interface DashboardRouterProps {
   activeSection: string;
@@ -41,6 +43,10 @@ interface DashboardRouterProps {
   onUpdateLeadForm: (id: string, name: string, code: string) => void;
   onDeleteLeadForm: (id: string) => void;
   onBulkLeadFormChange: (websiteIds: string[], leadFormId: string | undefined) => void;
+  credentials: Credential[];
+  onAddCredential: (name: string, username: string, password: string, apiKey: string, category: string) => void;
+  onUpdateCredential: (id: string, name: string, username: string, password: string, apiKey: string, category: string) => void;
+  onDeleteCredential: (id: string) => void;
   bulkActions: {
     checkAllParameters: (websites: Website[]) => Promise<void>;
     bulkKeywordUpdate: (websites: Website[]) => Promise<void>;
@@ -75,6 +81,10 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
   onUpdateLeadForm,
   onDeleteLeadForm,
   onBulkLeadFormChange,
+  credentials,
+  onAddCredential,
+  onUpdateCredential,
+  onDeleteCredential,
   bulkActions
 }) => {
   const navigate = useNavigate();
@@ -103,6 +113,16 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
             onAddLeadForm={onAddLeadForm}
             onUpdateLeadForm={onUpdateLeadForm}
             onDeleteLeadForm={onDeleteLeadForm}
+          />
+        );
+      case 'credentials':
+        return (
+          <CredentialsManagement
+            credentials={credentials}
+            masterCategoryFilter={masterCategoryFilter}
+            onAddCredential={onAddCredential}
+            onUpdateCredential={onUpdateCredential}
+            onDeleteCredential={onDeleteCredential}
           />
         );
       case 'websites':

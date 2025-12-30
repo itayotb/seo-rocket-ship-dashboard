@@ -5,10 +5,12 @@ import DashboardRouter from '@/components/dashboard/DashboardRouter';
 import { useDashboardState } from '@/hooks/useDashboardState';
 import { useWebsiteData } from '@/hooks/useWebsiteData';
 import { useLeadForms } from '@/hooks/useLeadForms';
+import { useCredentials } from '@/hooks/useCredentials';
 
 const Index = () => {
   const { websites, addWebsite, bulkUpdateLeadForm } = useWebsiteData();
   const { leadForms, addLeadForm, updateLeadForm, deleteLeadForm } = useLeadForms();
+  const { credentials, addCredential, updateCredential, deleteCredential } = useCredentials();
   const {
     activeSection,
     setActiveSection,
@@ -83,6 +85,10 @@ const Index = () => {
         onUpdateLeadForm={updateLeadForm}
         onDeleteLeadForm={deleteLeadForm}
         onBulkLeadFormChange={bulkUpdateLeadForm}
+        credentials={credentials}
+        onAddCredential={addCredential}
+        onUpdateCredential={updateCredential}
+        onDeleteCredential={deleteCredential}
       />
     </DashboardLayout>
   );
