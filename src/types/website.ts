@@ -14,6 +14,7 @@ export interface Website {
   lastUpdated: string;
   totalClicks?: number;
   category: string;
+  leadFormId?: string;
 }
 
 export interface WebsiteTableProps {

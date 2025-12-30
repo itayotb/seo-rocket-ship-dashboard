@@ -2,6 +2,7 @@ import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Wand2 } from 'lucide-react';
 import { CreatedWebsite } from '@/types/websiteCreation';
+import { LeadForm } from '@/types/leadForm';
 import { useWebsiteCreation } from '@/hooks/useWebsiteCreation';
 import { validateStep, getValidationMessage } from '@/utils/websiteCreationValidation';
 import { getWebsiteCreationSteps } from '@/utils/websiteCreationSteps';
@@ -14,9 +15,10 @@ interface WebsiteCreationWizardProps {
   onOpenChange: (open: boolean) => void;
   onComplete: (website: CreatedWebsite) => void;
   onNavigateToDomains?: () => void;
+  leadForms: LeadForm[];
 }
 
-const WebsiteCreationWizard = ({ open, onOpenChange, onComplete, onNavigateToDomains }: WebsiteCreationWizardProps) => {
+const WebsiteCreationWizard = ({ open, onOpenChange, onComplete, onNavigateToDomains, leadForms }: WebsiteCreationWizardProps) => {
   const steps = getWebsiteCreationSteps();
   
   const {
@@ -88,6 +90,7 @@ const WebsiteCreationWizard = ({ open, onOpenChange, onComplete, onNavigateToDom
             data={websiteData}
             onUpdate={updateWebsiteData}
             onNavigateToDomains={handleNavigateToDomains}
+            leadForms={leadForms}
           />
 
           <WebsiteCreationActions

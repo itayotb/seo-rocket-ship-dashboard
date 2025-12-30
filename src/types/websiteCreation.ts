@@ -14,6 +14,7 @@ export interface WebsiteCreationData {
   websiteName: string;
   category: string;
   aiPrompt?: string;
+  leadFormId?: string;
 }
 
 export interface Template {

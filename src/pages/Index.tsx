@@ -4,9 +4,11 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import DashboardRouter from '@/components/dashboard/DashboardRouter';
 import { useDashboardState } from '@/hooks/useDashboardState';
 import { useWebsiteData } from '@/hooks/useWebsiteData';
+import { useLeadForms } from '@/hooks/useLeadForms';
 
 const Index = () => {
   const { websites, addWebsite } = useWebsiteData();
+  const { leadForms, addLeadForm, updateLeadForm, deleteLeadForm } = useLeadForms();
   const {
     activeSection,
     setActiveSection,
@@ -76,6 +78,10 @@ const Index = () => {
         bulkActions={bulkActions}
         onWebsiteCreated={addWebsite}
         masterCategoryFilter={masterCategoryFilter}
+        leadForms={leadForms}
+        onAddLeadForm={addLeadForm}
+        onUpdateLeadForm={updateLeadForm}
+        onDeleteLeadForm={deleteLeadForm}
       />
     </DashboardLayout>
   );
