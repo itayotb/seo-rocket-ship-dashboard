@@ -20,7 +20,8 @@ export const useWebsiteData = () => {
       thumbnail: '',
       lastUpdated: '2 hours ago',
       totalClicks: 15420,
-      category: 'technology'
+      category: 'technology',
+      leadFormId: '1'
     },
     {
       id: '2',
@@ -68,7 +69,8 @@ export const useWebsiteData = () => {
       thumbnail: '',
       lastUpdated: '1 hour ago',
       totalClicks: 22187,
-      category: 'food'
+      category: 'food',
+      leadFormId: '2'
     }
   ]);
 
@@ -93,5 +95,21 @@ export const useWebsiteData = () => {
     setWebsites(prev => [newWebsite, ...prev]);
   };
 
-  return { websites, addWebsite };
+  const updateWebsiteLeadForm = (websiteId: string, leadFormId: string | undefined) => {
+    setWebsites(prev =>
+      prev.map(website =>
+        website.id === websiteId ? { ...website, leadFormId } : website
+      )
+    );
+  };
+
+  const bulkUpdateLeadForm = (websiteIds: string[], leadFormId: string | undefined) => {
+    setWebsites(prev =>
+      prev.map(website =>
+        websiteIds.includes(website.id) ? { ...website, leadFormId } : website
+      )
+    );
+  };
+
+  return { websites, addWebsite, updateWebsiteLeadForm, bulkUpdateLeadForm };
 };

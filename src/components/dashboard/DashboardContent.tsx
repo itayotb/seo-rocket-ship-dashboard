@@ -1,10 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Website } from '@/types/website';
+import { LeadForm } from '@/types/leadForm';
 import StatsOverview from '@/components/dashboard/StatsOverview';
 import WebsiteCard from '@/components/dashboard/WebsiteCard';
 import WebsiteTable from '@/components/dashboard/WebsiteTable';
 import BulkActionsToolbar from '@/components/dashboard/BulkActionsToolbar';
+import BulkLeadFormDialog from '@/components/dashboard/BulkLeadFormDialog';
 import WebsiteTimeframePicker from '@/components/dashboard/WebsiteTimeframePicker';
 import DashboardViewControls from '@/components/dashboard/DashboardViewControls';
 import { Button } from '@/components/ui/button';
@@ -27,6 +29,8 @@ interface DashboardContentProps {
   onClearSelection: () => void;
   isProcessing: boolean;
   onBulkOperation: (operation: () => Promise<void>, operationType: string) => void;
+  leadForms: LeadForm[];
+  onBulkLeadFormChange: (websiteIds: string[], leadFormId: string | undefined) => void;
   bulkActions: {
     checkAllParameters: (websites: Website[]) => Promise<void>;
     bulkKeywordUpdate: (websites: Website[]) => Promise<void>;
@@ -54,8 +58,16 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   onClearSelection,
   isProcessing,
   onBulkOperation,
+  leadForms,
+  onBulkLeadFormChange,
   bulkActions
 }) => {
+  const [showLeadFormDialog, setShowLeadFormDialog] = useState(false);
+
+  const handleBulkLeadFormApply = (leadFormId: string | undefined) => {
+    onBulkLeadFormChange(selectedWebsites, leadFormId);
+  };
+
   return (
     <div className="space-y-6">
       <StatsOverview />
@@ -94,6 +106,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           onBulkSpeedTest={() => onBulkOperation(() => bulkActions.bulkSpeedTest(websites), 'Speed Test')}
           onBulkSeoAnalysis={() => onBulkOperation(() => bulkActions.bulkSeoAnalysis(websites), 'SEO Analysis')}
           onBulkStatusCheck={() => onBulkOperation(() => bulkActions.bulkStatusCheck(websites), 'Status Check')}
+          onBulkLeadFormChange={() => setShowLeadFormDialog(true)}
           isProcessing={isProcessing}
         />
       )}
@@ -128,6 +141,14 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           ))}
         </div>
       )}
+
+      <BulkLeadFormDialog
+        isOpen={showLeadFormDialog}
+        onClose={() => setShowLeadFormDialog(false)}
+        selectedCount={selectedWebsites.length}
+        leadForms={leadForms}
+        onApply={handleBulkLeadFormApply}
+      />
     </div>
   );
 };
