@@ -5,12 +5,26 @@ export interface BulkKeywordEntry {
   keyword: string;
   geo: string;
   domain?: string;
-  domainStatus: 'pending' | 'available' | 'taken' | 'generated';
+  tld: string;
+  registrarId?: string;
+  domainStatus: 'pending' | 'available' | 'taken' | 'generated' | 'searching';
 }
 
 export interface LeadFormDistribution {
   leadFormId: string;
   leadFormName: string;
+  percentage: number;
+}
+
+export interface TemplateDistribution {
+  templateId: string;
+  templateName: string;
+  percentage: number;
+}
+
+export interface RegistrarDistribution {
+  registrarId: string;
+  registrarName: string;
   percentage: number;
 }
 
@@ -27,9 +41,9 @@ export interface BulkCreationJob {
   status: 'pending' | 'running' | 'paused' | 'completed' | 'failed';
   keywords: BulkKeywordEntry[];
   domainMode: 'manual' | 'auto';
-  tld?: string;
-  templateId: string;
-  templateName: string;
+  defaultTld: string;
+  templateDistribution: TemplateDistribution[];
+  registrarDistribution: RegistrarDistribution[];
   category: string;
   leadFormDistribution: LeadFormDistribution[];
   scheduling: SchedulingConfig;
@@ -48,9 +62,9 @@ export interface BulkCreationJob {
 export interface BulkCreationData {
   keywords: BulkKeywordEntry[];
   domainMode: 'manual' | 'auto';
-  tld: string;
-  templateId: string;
-  templateName: string;
+  defaultTld: string;
+  templateDistribution: TemplateDistribution[];
+  registrarDistribution: RegistrarDistribution[];
   category: string;
   leadFormDistribution: LeadFormDistribution[];
   scheduling: SchedulingConfig;
@@ -66,6 +80,15 @@ export const TLD_OPTIONS = [
   { value: '.us', label: '.us (USA)' },
   { value: '.uk', label: '.uk (UK)' },
   { value: '.au', label: '.au (Australia)' },
+];
+
+export const REGISTRAR_OPTIONS = [
+  { value: 'godaddy', label: 'GoDaddy' },
+  { value: 'namecheap', label: 'Namecheap' },
+  { value: 'cloudflare', label: 'Cloudflare Registrar' },
+  { value: 'google', label: 'Google Domains' },
+  { value: 'porkbun', label: 'Porkbun' },
+  { value: 'name', label: 'Name.com' },
 ];
 
 export const BULK_WIZARD_STEPS = [

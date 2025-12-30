@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { ChevronLeft, ChevronRight, Rocket } from 'lucide-react';
-import { BULK_WIZARD_STEPS, BulkCreationData, BulkKeywordEntry, LeadFormDistribution, SchedulingConfig } from '@/types/bulkWebsiteCreation';
+import { BULK_WIZARD_STEPS, BulkCreationData } from '@/types/bulkWebsiteCreation';
 import { Template } from '@/types/websiteCreation';
 import { LeadForm } from '@/types/leadForm';
 import BulkStepKeywords from './steps/BulkStepKeywords';
@@ -21,18 +21,20 @@ interface BulkCreationWizardProps {
   onComplete: (data: BulkCreationData) => void;
 }
 
+const initialData: BulkCreationData = {
+  keywords: [],
+  domainMode: 'auto',
+  defaultTld: '.com',
+  templateDistribution: [],
+  registrarDistribution: [],
+  category: 'all',
+  leadFormDistribution: [],
+  scheduling: { mode: 'immediate' },
+};
+
 const BulkCreationWizard = ({ open, onOpenChange, templates, leadForms, onComplete }: BulkCreationWizardProps) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [data, setData] = useState<BulkCreationData>({
-    keywords: [],
-    domainMode: 'auto',
-    tld: '.com',
-    templateId: '',
-    templateName: '',
-    category: 'all',
-    leadFormDistribution: [],
-    scheduling: { mode: 'immediate' },
-  });
+  const [data, setData] = useState<BulkCreationData>(initialData);
 
   const updateData = (updates: Partial<BulkCreationData>) => {
     setData((prev) => ({ ...prev, ...updates }));
@@ -50,29 +52,32 @@ const BulkCreationWizard = ({ open, onOpenChange, templates, leadForms, onComple
     onComplete(data);
     onOpenChange(false);
     setCurrentStep(1);
-    setData({
-      keywords: [],
-      domainMode: 'auto',
-      tld: '.com',
-      templateId: '',
-      templateName: '',
-      category: 'all',
-      leadFormDistribution: [],
-      scheduling: { mode: 'immediate' },
-    });
+    setData(initialData);
   };
 
   const canProceed = () => {
     switch (currentStep) {
-      case 1: return data.keywords.some((kw) => kw.keyword.trim());
-      case 2: return true;
-      case 3: return !!data.templateId;
-      case 4: return data.leadFormDistribution.reduce((sum, d) => sum + d.percentage, 0) === 100;
-      case 5: return true;
-      case 6: return true;
-      default: return true;
+      case 1: 
+        return data.keywords.some((kw) => kw.keyword.trim());
+      case 2: 
+        // Can proceed even if searching - registrar distribution is optional or must be 100%
+        const registrarTotal = data.registrarDistribution.reduce((sum, d) => sum + d.percentage, 0);
+        return data.registrarDistribution.length === 0 || registrarTotal === 100;
+      case 3: 
+        const templateTotal = data.templateDistribution.reduce((sum, d) => sum + d.percentage, 0);
+        return data.templateDistribution.length > 0 && templateTotal === 100;
+      case 4: 
+        return data.leadFormDistribution.reduce((sum, d) => sum + d.percentage, 0) === 100;
+      case 5: 
+        return true;
+      case 6: 
+        return true;
+      default: 
+        return true;
     }
   };
+
+  const validKeywordsCount = data.keywords.filter((kw) => kw.keyword.trim()).length;
 
   const renderStep = () => {
     switch (currentStep) {
@@ -80,7 +85,7 @@ const BulkCreationWizard = ({ open, onOpenChange, templates, leadForms, onComple
         return (
           <BulkStepKeywords
             keywords={data.keywords}
-            onKeywordsChange={(keywords) => updateData({ keywords })}
+            onKeywordsChange={(keywords) => updateData({ keywords: keywords.map(kw => ({ ...kw, tld: kw.tld || data.defaultTld })) })}
           />
         );
       case 2:
@@ -88,19 +93,22 @@ const BulkCreationWizard = ({ open, onOpenChange, templates, leadForms, onComple
           <BulkStepDomains
             keywords={data.keywords}
             domainMode={data.domainMode}
-            tld={data.tld}
+            defaultTld={data.defaultTld}
+            registrarDistribution={data.registrarDistribution}
             onDomainModeChange={(domainMode) => updateData({ domainMode })}
-            onTldChange={(tld) => updateData({ tld })}
+            onDefaultTldChange={(defaultTld) => updateData({ defaultTld })}
             onKeywordsChange={(keywords) => updateData({ keywords })}
+            onRegistrarDistributionChange={(registrarDistribution) => updateData({ registrarDistribution })}
           />
         );
       case 3:
         return (
           <BulkStepTemplate
             templates={templates}
-            selectedTemplateId={data.templateId}
+            templateDistribution={data.templateDistribution}
             selectedCategory={data.category}
-            onTemplateChange={(templateId, templateName) => updateData({ templateId, templateName })}
+            totalKeywords={validKeywordsCount}
+            onTemplateDistributionChange={(templateDistribution) => updateData({ templateDistribution })}
             onCategoryChange={(category) => updateData({ category })}
           />
         );
@@ -109,14 +117,14 @@ const BulkCreationWizard = ({ open, onOpenChange, templates, leadForms, onComple
           <BulkStepLeadForms
             leadForms={leadForms}
             distribution={data.leadFormDistribution}
-            totalKeywords={data.keywords.filter((kw) => kw.keyword.trim()).length}
+            totalKeywords={validKeywordsCount}
             onDistributionChange={(leadFormDistribution) => updateData({ leadFormDistribution })}
           />
         );
       case 5:
         return (
           <BulkStepScheduling
-            totalKeywords={data.keywords.filter((kw) => kw.keyword.trim()).length}
+            totalKeywords={validKeywordsCount}
             scheduling={data.scheduling}
             onSchedulingChange={(scheduling) => updateData({ scheduling })}
           />

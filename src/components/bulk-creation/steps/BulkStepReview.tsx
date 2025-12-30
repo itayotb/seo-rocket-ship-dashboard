@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Check, Globe, Layout, FileText, Calendar, AlertCircle } from 'lucide-react';
-import { BulkCreationData } from '@/types/bulkWebsiteCreation';
+import { Check, Globe, Layout, FileText, Calendar, AlertCircle, Server } from 'lucide-react';
+import { BulkCreationData, REGISTRAR_OPTIONS } from '@/types/bulkWebsiteCreation';
 import { calculateCompletionEstimate } from '@/utils/bulkCreationMock';
 import { format } from 'date-fns';
 
@@ -16,8 +16,15 @@ const BulkStepReview = ({ data }: BulkStepReviewProps) => {
   const estimate = calculateCompletionEstimate(data.keywords.length, data.scheduling);
   
   const validKeywords = data.keywords.filter((kw) => kw.keyword.trim());
-  const totalDistribution = data.leadFormDistribution.reduce((sum, d) => sum + d.percentage, 0);
-  const isValid = validKeywords.length > 0 && data.templateId && totalDistribution === 100;
+  const totalLeadFormDistribution = data.leadFormDistribution.reduce((sum, d) => sum + d.percentage, 0);
+  const totalTemplateDistribution = data.templateDistribution.reduce((sum, d) => sum + d.percentage, 0);
+  const totalRegistrarDistribution = data.registrarDistribution.reduce((sum, d) => sum + d.percentage, 0);
+  
+  const hasTemplates = data.templateDistribution.length > 0 && totalTemplateDistribution === 100;
+  const hasLeadForms = totalLeadFormDistribution === 100;
+  const hasRegistrars = data.registrarDistribution.length === 0 || totalRegistrarDistribution === 100;
+  
+  const isValid = validKeywords.length > 0 && hasTemplates && hasLeadForms && hasRegistrars;
 
   const getSchedulingDescription = () => {
     switch (data.scheduling.mode) {
@@ -31,6 +38,8 @@ const BulkStepReview = ({ data }: BulkStepReviewProps) => {
         return '-';
     }
   };
+
+  const availableCount = validKeywords.filter((kw) => kw.domainStatus === 'available').length;
 
   return (
     <div className="space-y-6">
@@ -47,8 +56,9 @@ const BulkStepReview = ({ data }: BulkStepReviewProps) => {
           <span className="text-sm">
             Please fix the following issues before proceeding:
             {validKeywords.length === 0 && ' Add at least one keyword.'}
-            {!data.templateId && ' Select a template.'}
-            {totalDistribution !== 100 && ' Lead form distribution must equal 100%.'}
+            {!hasTemplates && ' Select templates (total must be 100%).'}
+            {!hasLeadForms && ' Lead form distribution must equal 100%.'}
+            {!hasRegistrars && ' Registrar distribution must equal 100%.'}
           </span>
         </div>
       )}
@@ -68,9 +78,15 @@ const BulkStepReview = ({ data }: BulkStepReviewProps) => {
                 <span className="font-medium">{validKeywords.length}</span>
               </div>
               <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Available Domains</span>
+                <Badge variant="secondary" className="bg-green-500/10 text-green-600">
+                  {availableCount}/{validKeywords.length}
+                </Badge>
+              </div>
+              <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Domain Mode</span>
                 <Badge variant="secondary">
-                  {data.domainMode === 'auto' ? `Auto (${data.tld})` : 'Manual'}
+                  {data.domainMode === 'auto' ? `Auto (${data.defaultTld})` : 'Manual'}
                 </Badge>
               </div>
             </div>
@@ -81,19 +97,42 @@ const BulkStepReview = ({ data }: BulkStepReviewProps) => {
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Layout className="h-4 w-4" />
-              Template & Category
+              Templates ({data.templateDistribution.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Template</span>
-                <span className="font-medium">{data.templateName || 'Not selected'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Category</span>
-                <Badge variant="secondary">{data.category || 'All'}</Badge>
-              </div>
+              {data.templateDistribution.filter((d) => d.percentage > 0).map((d) => (
+                <div key={d.templateId} className="flex justify-between">
+                  <span className="text-sm text-muted-foreground line-clamp-1">{d.templateName}</span>
+                  <span className="font-medium">{d.percentage}%</span>
+                </div>
+              ))}
+              {data.templateDistribution.length === 0 && (
+                <span className="text-sm text-muted-foreground">No templates selected</span>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Server className="h-4 w-4" />
+              Registrars
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {data.registrarDistribution.filter((d) => d.percentage > 0).map((d) => (
+                <div key={d.registrarId} className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">{d.registrarName}</span>
+                  <span className="font-medium">{d.percentage}%</span>
+                </div>
+              ))}
+              {data.registrarDistribution.filter((d) => d.percentage > 0).length === 0 && (
+                <span className="text-sm text-muted-foreground">No registrar distribution set</span>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -120,7 +159,7 @@ const BulkStepReview = ({ data }: BulkStepReviewProps) => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="md:col-span-2">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Calendar className="h-4 w-4" />
@@ -128,18 +167,18 @@ const BulkStepReview = ({ data }: BulkStepReviewProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Mode</span>
-                <span className="font-medium">{getSchedulingDescription()}</span>
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground">Mode</p>
+                <p className="font-medium">{getSchedulingDescription()}</p>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Est. Duration</span>
-                <span className="font-medium">{estimate.days} days</span>
+              <div>
+                <p className="text-sm text-muted-foreground">Est. Duration</p>
+                <p className="font-medium">{estimate.days} days</p>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Completion</span>
-                <span className="font-medium">{format(estimate.completionDate, 'MMM d, yyyy')}</span>
+              <div>
+                <p className="text-sm text-muted-foreground">Completion</p>
+                <p className="font-medium">{format(estimate.completionDate, 'MMM d, yyyy')}</p>
               </div>
             </div>
           </CardContent>
@@ -160,6 +199,7 @@ const BulkStepReview = ({ data }: BulkStepReviewProps) => {
                   <TableHead className="w-12">#</TableHead>
                   <TableHead>Keyword</TableHead>
                   <TableHead>GEO</TableHead>
+                  <TableHead>TLD</TableHead>
                   <TableHead>Domain</TableHead>
                   <TableHead className="w-16">Status</TableHead>
                 </TableRow>
@@ -172,12 +212,13 @@ const BulkStepReview = ({ data }: BulkStepReviewProps) => {
                     </TableCell>
                     <TableCell>{kw.keyword}</TableCell>
                     <TableCell>{kw.geo.toUpperCase()}</TableCell>
+                    <TableCell className="font-mono text-xs">{kw.tld}</TableCell>
                     <TableCell className="font-mono text-xs">{kw.domain || '-'}</TableCell>
                     <TableCell>
                       {kw.domainStatus === 'available' ? (
                         <Check className="h-4 w-4 text-green-500" />
                       ) : (
-                        <Badge variant="outline" className="text-xs">Pending</Badge>
+                        <Badge variant="outline" className="text-xs">{kw.domainStatus}</Badge>
                       )}
                     </TableCell>
                   </TableRow>

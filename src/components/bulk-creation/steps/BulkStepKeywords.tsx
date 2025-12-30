@@ -24,6 +24,7 @@ const BulkStepKeywords = ({ keywords, onKeywordsChange }: BulkStepKeywordsProps)
       id: `kw-${Date.now()}`,
       keyword: '',
       geo: defaultGeo,
+      tld: '.com',
       domainStatus: 'pending',
     };
     onKeywordsChange([...keywords, newKeyword]);
@@ -47,6 +48,7 @@ const BulkStepKeywords = ({ keywords, onKeywordsChange }: BulkStepKeywordsProps)
       id: `kw-${Date.now()}-${index}`,
       keyword: line.trim(),
       geo: defaultGeo,
+      tld: '.com',
       domainStatus: 'pending',
     }));
     onKeywordsChange([...keywords, ...newKeywords]);
