@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardContent from '@/components/dashboard/DashboardContent';
@@ -11,6 +10,7 @@ import LeadFormsManagement from '@/components/leadforms/LeadFormsManagement';
 import CredentialsManagement from '@/components/credentials/CredentialsManagement';
 import PermissionsManagement from '@/components/permissions/PermissionsManagement';
 import KeywordResearchDashboard from '@/components/keyword-research/KeywordResearchDashboard';
+import BulkJobsDashboard from '@/components/bulk-creation/BulkJobsDashboard';
 import CreateWebsiteButton from '@/components/dashboard/CreateWebsiteButton';
 import { 
   ToolsPlaceholder, 
@@ -21,6 +21,7 @@ import { CreatedWebsite, Template } from '@/types/websiteCreation';
 import { LeadForm } from '@/types/leadForm';
 import { Credential } from '@/types/credential';
 import { AppUser, UserRole, RolePermission } from '@/types/permission';
+import { BulkCreationJob, BulkCreationData } from '@/types/bulkWebsiteCreation';
 
 interface DashboardRouterProps {
   activeSection: string;
@@ -65,6 +66,12 @@ interface DashboardRouterProps {
     bulkSeoAnalysis: (websites: Website[]) => Promise<void>;
     bulkStatusCheck: (websites: Website[]) => Promise<void>;
   };
+  // Bulk creation props
+  bulkJobs: BulkCreationJob[];
+  onBulkCreate: (data: BulkCreationData) => void;
+  onPauseBulkJob: (jobId: string) => void;
+  onResumeBulkJob: (jobId: string) => void;
+  onCancelBulkJob: (jobId: string) => void;
 }
 
 const DashboardRouter: React.FC<DashboardRouterProps> = ({
@@ -101,7 +108,12 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
   onAddUser,
   onUpdateUser,
   onDeleteUser,
-  bulkActions
+  bulkActions,
+  bulkJobs,
+  onBulkCreate,
+  onPauseBulkJob,
+  onResumeBulkJob,
+  onCancelBulkJob
 }) => {
   const navigate = useNavigate();
 
@@ -157,6 +169,8 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
                 onNavigateToDomains={handleNavigateToDomains}
                 onWebsiteCreated={onWebsiteCreated}
                 leadForms={leadForms}
+                templates={templates}
+                onBulkCreate={onBulkCreate}
               />
             </div>
             <DashboardContent
@@ -202,6 +216,15 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
         );
       case 'keyword-research':
         return <KeywordResearchDashboard />;
+      case 'bulk-jobs':
+        return (
+          <BulkJobsDashboard
+            jobs={bulkJobs}
+            onPause={onPauseBulkJob}
+            onResume={onResumeBulkJob}
+            onCancel={onCancelBulkJob}
+          />
+        );
       case 'tools':
         return <ToolsPlaceholder />;
       case 'settings':
@@ -220,6 +243,8 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
                 onNavigateToDomains={handleNavigateToDomains}
                 onWebsiteCreated={onWebsiteCreated}
                 leadForms={leadForms}
+                templates={templates}
+                onBulkCreate={onBulkCreate}
               />
             </div>
             <DashboardContent
