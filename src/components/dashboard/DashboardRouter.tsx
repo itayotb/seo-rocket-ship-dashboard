@@ -7,6 +7,7 @@ import AnalyticsDashboard from '@/components/analytics/AnalyticsDashboard';
 import CloudflareSettings from '@/components/cloudflare/CloudflareSettings';
 import DomainsManagement from '@/components/domains/DomainsManagement';
 import ReportsDashboard from '@/components/reports/ReportsDashboard';
+import LeadFormsManagement from '@/components/leadforms/LeadFormsManagement';
 import CreateWebsiteButton from '@/components/dashboard/CreateWebsiteButton';
 import { 
   ToolsPlaceholder, 
@@ -14,6 +15,7 @@ import {
 } from '@/components/dashboard/PlaceholderSections';
 import { Website } from '@/types/website';
 import { CreatedWebsite } from '@/types/websiteCreation';
+import { LeadForm } from '@/types/leadForm';
 
 interface DashboardRouterProps {
   activeSection: string;
@@ -34,6 +36,10 @@ interface DashboardRouterProps {
   onSectionChange: (section: string) => void;
   onWebsiteCreated: (website: CreatedWebsite) => void;
   masterCategoryFilter: string;
+  leadForms: LeadForm[];
+  onAddLeadForm: (name: string, code: string) => void;
+  onUpdateLeadForm: (id: string, name: string, code: string) => void;
+  onDeleteLeadForm: (id: string) => void;
   bulkActions: {
     checkAllParameters: (websites: Website[]) => Promise<void>;
     bulkKeywordUpdate: (websites: Website[]) => Promise<void>;
@@ -63,6 +69,10 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
   onSectionChange,
   onWebsiteCreated,
   masterCategoryFilter,
+  leadForms,
+  onAddLeadForm,
+  onUpdateLeadForm,
+  onDeleteLeadForm,
   bulkActions
 }) => {
   const navigate = useNavigate();
@@ -84,6 +94,15 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
     switch (activeSection) {
       case 'templates':
         return <TemplateGallery masterCategoryFilter={masterCategoryFilter} />;
+      case 'leadforms':
+        return (
+          <LeadFormsManagement
+            leadForms={leadForms}
+            onAddLeadForm={onAddLeadForm}
+            onUpdateLeadForm={onUpdateLeadForm}
+            onDeleteLeadForm={onDeleteLeadForm}
+          />
+        );
       case 'websites':
         return (
           <div className="space-y-6">
@@ -97,6 +116,7 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
               <CreateWebsiteButton 
                 onNavigateToDomains={handleNavigateToDomains}
                 onWebsiteCreated={onWebsiteCreated}
+                leadForms={leadForms}
               />
             </div>
             <DashboardContent
@@ -145,6 +165,7 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
               <CreateWebsiteButton 
                 onNavigateToDomains={handleNavigateToDomains}
                 onWebsiteCreated={onWebsiteCreated}
+                leadForms={leadForms}
               />
             </div>
             <DashboardContent

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Home, BarChart3, Globe, Layout, FileText, Cloud, Menu, X } from 'lucide-react';
+import { Home, BarChart3, Globe, Layout, FileText, Cloud, Menu, X, FileCode } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
@@ -22,6 +22,7 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'domains', label: 'Domains', icon: Globe },
     { id: 'templates', label: 'Templates', icon: Layout },
+    { id: 'leadforms', label: 'Lead Forms', icon: FileCode },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'reports', label: 'Reports', icon: FileText },
     { id: 'cloudflare', label: 'Cloudflare', icon: Cloud },

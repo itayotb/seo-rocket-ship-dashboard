@@ -4,13 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Wand2 } from 'lucide-react';
 import WebsiteCreationWizard from '@/components/website-creation/WebsiteCreationWizard';
 import { CreatedWebsite } from '@/types/websiteCreation';
+import { LeadForm } from '@/types/leadForm';
 
 interface CreateWebsiteButtonProps {
   onWebsiteCreated?: (website: CreatedWebsite) => void;
   onNavigateToDomains?: () => void;
+  leadForms?: LeadForm[];
 }
 
-const CreateWebsiteButton = ({ onWebsiteCreated, onNavigateToDomains }: CreateWebsiteButtonProps) => {
+const CreateWebsiteButton = ({ onWebsiteCreated, onNavigateToDomains, leadForms = [] }: CreateWebsiteButtonProps) => {
   const [showWizard, setShowWizard] = useState(false);
 
   const handleWebsiteCreated = (website: CreatedWebsite) => {
@@ -33,6 +35,7 @@ const CreateWebsiteButton = ({ onWebsiteCreated, onNavigateToDomains }: CreateWe
         onOpenChange={setShowWizard}
         onComplete={handleWebsiteCreated}
         onNavigateToDomains={onNavigateToDomains}
+        leadForms={leadForms}
       />
     </>
   );

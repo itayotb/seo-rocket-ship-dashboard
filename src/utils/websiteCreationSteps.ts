@@ -27,6 +27,12 @@ export const getWebsiteCreationSteps = (): WebsiteCreationStep[] => [
     status: 'pending'
   },
   {
+    id: 'lead-form',
+    title: 'Lead Form',
+    description: 'Select a lead form for your website',
+    status: 'pending'
+  },
+  {
     id: 'preview',
     title: 'Preview Website',
     description: 'Preview your generated website content',
