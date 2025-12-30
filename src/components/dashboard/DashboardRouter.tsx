@@ -33,6 +33,7 @@ interface DashboardRouterProps {
   onBulkOperation: (operation: () => Promise<void>, operationType: string) => void;
   onSectionChange: (section: string) => void;
   onWebsiteCreated: (website: CreatedWebsite) => void;
+  masterCategoryFilter: string;
   bulkActions: {
     checkAllParameters: (websites: Website[]) => Promise<void>;
     bulkKeywordUpdate: (websites: Website[]) => Promise<void>;
@@ -61,6 +62,7 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
   onBulkOperation,
   onSectionChange,
   onWebsiteCreated,
+  masterCategoryFilter,
   bulkActions
 }) => {
   const navigate = useNavigate();
@@ -121,7 +123,7 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
       case 'domains':
         return <DomainsManagement />;
       case 'analytics':
-        return <AnalyticsDashboard />;
+        return <AnalyticsDashboard masterCategoryFilter={masterCategoryFilter} />;
       case 'reports':
         return <ReportsDashboard />;
       case 'cloudflare':

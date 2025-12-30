@@ -12,6 +12,7 @@ export const useDashboardState = (websites: Website[]) => {
   const [currentOperationType, setCurrentOperationType] = useState('');
   const [timeframe, setTimeframe] = useState('28days');
   const [deleteWebsiteId, setDeleteWebsiteId] = useState<string | null>(null);
+  const [masterCategoryFilter, setMasterCategoryFilter] = useState('all');
   const { toast } = useToast();
 
   const {
@@ -79,6 +80,8 @@ export const useDashboardState = (websites: Website[]) => {
     setTimeframe,
     deleteWebsiteId,
     setDeleteWebsiteId,
+    masterCategoryFilter,
+    setMasterCategoryFilter,
     selectedWebsites,
     isProcessing,
     results,

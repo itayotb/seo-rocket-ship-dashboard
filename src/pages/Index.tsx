@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import DashboardRouter from '@/components/dashboard/DashboardRouter';
 import { useDashboardState } from '@/hooks/useDashboardState';
@@ -21,6 +21,8 @@ const Index = () => {
     setTimeframe,
     deleteWebsiteId,
     setDeleteWebsiteId,
+    masterCategoryFilter,
+    setMasterCategoryFilter,
     selectedWebsites,
     isProcessing,
     results,
@@ -32,6 +34,12 @@ const Index = () => {
     handleBulkOperation,
     bulkActions
   } = useDashboardState(websites);
+
+  // Filter websites by master category
+  const filteredWebsites = useMemo(() => {
+    if (masterCategoryFilter === 'all') return websites;
+    return websites.filter(website => website.category === masterCategoryFilter);
+  }, [websites, masterCategoryFilter]);
 
   return (
     <DashboardLayout
@@ -45,10 +53,12 @@ const Index = () => {
       onDeleteWebsiteIdChange={setDeleteWebsiteId}
       websites={websites}
       onConfirmDeleteWebsite={confirmDeleteWebsite}
+      masterCategoryFilter={masterCategoryFilter}
+      onMasterCategoryFilterChange={setMasterCategoryFilter}
     >
       <DashboardRouter
         activeSection={activeSection}
-        websites={websites}
+        websites={filteredWebsites}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         showBulkActions={showBulkActions}
@@ -65,9 +75,11 @@ const Index = () => {
         onSectionChange={setActiveSection}
         bulkActions={bulkActions}
         onWebsiteCreated={addWebsite}
+        masterCategoryFilter={masterCategoryFilter}
       />
     </DashboardLayout>
   );
 };
 
 export default Index;
+
