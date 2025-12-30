@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Layers, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { BulkCreationJob } from '@/types/bulkWebsiteCreation';
 import BulkJobCard from './BulkJobCard';
+import BulkJobDetails from './BulkJobDetails';
 
 interface BulkJobsDashboardProps {
   jobs: BulkCreationJob[];
@@ -12,11 +13,26 @@ interface BulkJobsDashboardProps {
 }
 
 const BulkJobsDashboard = ({ jobs, onPause, onResume, onCancel }: BulkJobsDashboardProps) => {
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  
   const activeJobs = jobs.filter((j) => j.status === 'running' || j.status === 'paused');
   const completedJobs = jobs.filter((j) => j.status === 'completed');
-  const pendingJobs = jobs.filter((j) => j.status === 'pending');
 
   const totalSitesCreated = jobs.reduce((sum, j) => sum + j.progress.completed, 0);
+
+  const selectedJob = jobs.find(j => j.id === selectedJobId);
+
+  if (selectedJob) {
+    return (
+      <BulkJobDetails
+        job={selectedJob}
+        onBack={() => setSelectedJobId(null)}
+        onPause={onPause}
+        onResume={onResume}
+        onCancel={onCancel}
+      />
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -80,7 +96,14 @@ const BulkJobsDashboard = ({ jobs, onPause, onResume, onCancel }: BulkJobsDashbo
           <h3 className="text-lg font-semibold">Active Jobs</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {activeJobs.map((job) => (
-              <BulkJobCard key={job.id} job={job} onPause={onPause} onResume={onResume} onCancel={onCancel} />
+              <BulkJobCard 
+                key={job.id} 
+                job={job} 
+                onPause={onPause} 
+                onResume={onResume} 
+                onCancel={onCancel}
+                onViewDetails={setSelectedJobId}
+              />
             ))}
           </div>
         </div>
@@ -91,7 +114,14 @@ const BulkJobsDashboard = ({ jobs, onPause, onResume, onCancel }: BulkJobsDashbo
           <h3 className="text-lg font-semibold">Completed Jobs</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {completedJobs.map((job) => (
-              <BulkJobCard key={job.id} job={job} onPause={onPause} onResume={onResume} onCancel={onCancel} />
+              <BulkJobCard 
+                key={job.id} 
+                job={job} 
+                onPause={onPause} 
+                onResume={onResume} 
+                onCancel={onCancel}
+                onViewDetails={setSelectedJobId}
+              />
             ))}
           </div>
         </div>
