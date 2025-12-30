@@ -10,14 +10,8 @@ export const getWebsiteCreationSteps = (): WebsiteCreationStep[] => [
   },
   {
     id: 'keywords',
-    title: 'Keywords & SEO',
-    description: 'Choose keywords to optimize your website for',
-    status: 'pending'
-  },
-  {
-    id: 'ai-customization',
-    title: 'AI Customization',
-    description: 'Tell AI how to customize your content and design',
+    title: 'Keywords & AI Analysis',
+    description: 'Analyze top results and get recommended sections',
     status: 'pending'
   },
   {

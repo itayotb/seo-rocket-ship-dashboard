@@ -4,7 +4,6 @@ import { WebsiteCreationData } from '@/types/websiteCreation';
 import { LeadForm } from '@/types/leadForm';
 import WebsiteStepOne from './steps/WebsiteStepOne';
 import WebsiteStepTwo from './steps/WebsiteStepTwo';
-import WebsiteStepTwoPointFive from './steps/WebsiteStepTwoPointFive';
 import WebsiteStepThree from './steps/WebsiteStepThree';
 import WebsiteStepFive from './steps/WebsiteStepFive';
 import WebsiteStepSix from './steps/WebsiteStepSix';
@@ -31,12 +30,10 @@ const WebsiteCreationForm = ({ currentStep, data, onUpdate, onNavigateToDomains,
       case 1:
         return <WebsiteStepTwo data={data} onUpdate={onUpdate} />;
       case 2:
-        return <WebsiteStepTwoPointFive data={data} onUpdate={onUpdate} />;
-      case 3:
         return <WebsiteStepThree data={data} onUpdate={onUpdate} leadForms={leadForms} />;
-      case 4:
+      case 3:
         return <WebsiteStepSix data={data} onUpdate={onUpdate} leadForms={leadForms} />;
-      case 5:
+      case 4:
         return <WebsiteStepFive data={data} onUpdate={onUpdate} />;
       default:
         return null;
@@ -47,3 +44,4 @@ const WebsiteCreationForm = ({ currentStep, data, onUpdate, onNavigateToDomains,
 };
 
 export default WebsiteCreationForm;
+

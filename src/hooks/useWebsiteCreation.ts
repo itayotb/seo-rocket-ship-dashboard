@@ -9,6 +9,8 @@ export const useWebsiteCreation = (onComplete: (website: CreatedWebsite) => void
   const [isLoading, setIsLoading] = useState(false);
   const [websiteData, setWebsiteData] = useState<WebsiteCreationData>({
     domain: '',
+    mainKeyword: '',
+    geo: '',
     keywords: [],
     template: '',
     websiteName: '',
@@ -25,6 +27,8 @@ export const useWebsiteCreation = (onComplete: (website: CreatedWebsite) => void
     setCurrentStep(0);
     setWebsiteData({
       domain: '',
+      mainKeyword: '',
+      geo: '',
       keywords: [],
       template: '',
       websiteName: '',
