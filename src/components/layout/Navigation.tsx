@@ -22,10 +22,10 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'domains', label: 'Domains', icon: Globe },
     { id: 'templates', label: 'Templates', icon: Layout },
-    { id: 'leadforms', label: 'Lead Forms', icon: FileCode },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'reports', label: 'Reports', icon: FileText },
     { id: 'cloudflare', label: 'Cloudflare', icon: Cloud },
+    { id: 'leadforms', label: 'Lead Forms', icon: FileCode },
   ];
 
   const handleMobileItemClick = (itemId: string) => {
