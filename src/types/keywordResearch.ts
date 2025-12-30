@@ -83,7 +83,6 @@ export interface KeywordAnalysis {
   backlinks: BacklinksAnalysis;
   pagePower: PagePowerAnalysis;
   intent: IntentAnalysis;
-  contentQualityScore: number;
   uxTrustScore: number;
   serpStabilityScore: number;
   difficultyScore: number;
