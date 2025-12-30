@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,16 +19,8 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({ onApplyFilters }) => {
 
   const intentOptions: IntentType[] = ['Informational', 'Commercial', 'Transactional', 'Navigational'];
 
-  const handleIntentChange = (intent: IntentType, checked: boolean) => {
-    setLocalFilters(prev => ({
-      ...prev,
-      intentTypes: checked
-        ? [...prev.intentTypes, intent]
-        : prev.intentTypes.filter(i => i !== intent),
-    }));
-  };
-
-  const handleApply = () => {
+  // Apply filters automatically when any filter changes
+  useEffect(() => {
     const terms = includeText
       .split(',')
       .map(t => t.trim())
@@ -38,21 +30,34 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({ onApplyFilters }) => {
       ...localFilters,
       includeTerms: terms,
     });
+  }, [localFilters, includeText, onApplyFilters]);
+
+  const handleIntentChange = (intent: IntentType, checked: boolean) => {
+    setLocalFilters(prev => ({
+      ...prev,
+      intentTypes: checked
+        ? [...prev.intentTypes, intent]
+        : prev.intentTypes.filter(i => i !== intent),
+    }));
   };
 
   const handleReset = () => {
     setLocalFilters(defaultFilters);
     setIncludeText('');
-    onApplyFilters(defaultFilters);
   };
 
   return (
     <Card className="h-fit">
       <CardHeader className="pb-4">
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Filter className="h-5 w-5" />
-          Filters
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Filter className="h-5 w-5" />
+            Filters
+          </CardTitle>
+          <Button variant="ghost" size="icon" onClick={handleReset} title="Reset filters">
+            <RotateCcw className="h-4 w-4" />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Volume Filter */}
@@ -168,16 +173,6 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({ onApplyFilters }) => {
             onChange={(e) => setIncludeText(e.target.value)}
           />
           <p className="text-xs text-muted-foreground">Separate terms with commas</p>
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-2 pt-2">
-          <Button onClick={handleApply} className="flex-1">
-            Apply Filters
-          </Button>
-          <Button variant="outline" size="icon" onClick={handleReset}>
-            <RotateCcw className="h-4 w-4" />
-          </Button>
         </div>
       </CardContent>
     </Card>
