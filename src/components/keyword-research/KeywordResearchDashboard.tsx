@@ -8,6 +8,7 @@ import SummaryActions from './SummaryActions';
 import AnalysisResultsPanel from './AnalysisResultsPanel';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const KeywordResearchDashboard: React.FC = () => {
   const {
@@ -51,38 +52,48 @@ const KeywordResearchDashboard: React.FC = () => {
       />
 
       {isLoaded && (
-        <>
-          <SummaryActions
-            totalKeywords={allKeywords.length}
-            filteredCount={filteredKeywords.length}
-            selectedCount={selectedIds.length}
-            onAnalyze={analyzeSelected}
-            isAnalyzing={isAnalyzing}
-          />
+        <Tabs defaultValue="keywords" className="w-full">
+          <TabsList>
+            <TabsTrigger value="keywords">Keywords</TabsTrigger>
+            <TabsTrigger value="analysis" disabled={!showAnalysis}>
+              AI Analysis {showAnalysis && `(${analysisResults.length})`}
+            </TabsTrigger>
+          </TabsList>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-1">
-              <FiltersPanel onApplyFilters={applyFilters} />
-            </div>
-            <div className={showAnalysis ? "lg:col-span-2" : "lg:col-span-3"}>
-              <KeywordsTable
-                rows={filteredKeywords}
-                selectedIds={selectedIds}
-                onToggleSelect={toggleSelection}
-                onSelectAll={selectAll}
-                onClearSelection={clearSelection}
-              />
-            </div>
-            {showAnalysis && analysisResults.length > 0 && (
+          <TabsContent value="keywords" className="mt-6">
+            <SummaryActions
+              totalKeywords={allKeywords.length}
+              filteredCount={filteredKeywords.length}
+              selectedCount={selectedIds.length}
+              onAnalyze={analyzeSelected}
+              isAnalyzing={isAnalyzing}
+            />
+
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
               <div className="lg:col-span-1">
-                <AnalysisResultsPanel 
-                  results={analysisResults} 
-                  onClose={closeAnalysis}
+                <FiltersPanel onApplyFilters={applyFilters} />
+              </div>
+              <div className="lg:col-span-3">
+                <KeywordsTable
+                  rows={filteredKeywords}
+                  selectedIds={selectedIds}
+                  onToggleSelect={toggleSelection}
+                  onSelectAll={selectAll}
+                  onClearSelection={clearSelection}
                 />
               </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="analysis" className="mt-6">
+            {showAnalysis && analysisResults.length > 0 && (
+              <AnalysisResultsPanel 
+                results={analysisResults} 
+                onClose={closeAnalysis}
+              />
             )}
-          </div>
-        </>
+          </TabsContent>
+        </Tabs>
       )}
 
       {!isLoaded && !isLoading && (
