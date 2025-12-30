@@ -16,7 +16,8 @@ import {
   Search,
   ChevronUp,
   ChevronDown,
-  Layers
+  Layers,
+  HelpCircle
 } from 'lucide-react';
 import {
   Table,
@@ -33,6 +34,72 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+
+// Column tooltips explaining each metric
+const columnTooltips: Record<string, { title: string; description: string }> = {
+  keyword: {
+    title: 'Keyword',
+    description: 'The search term being analyzed for SEO competition and ranking potential.'
+  },
+  geo: {
+    title: 'GEO',
+    description: 'Geographic location/country where the keyword search volume is measured.'
+  },
+  volume: {
+    title: 'Search Volume',
+    description: 'Average monthly search volume for this keyword. Higher volume = more potential traffic but often more competition.'
+  },
+  score: {
+    title: 'Overall Score',
+    description: 'Combined difficulty score (0-100) calculated from: Domain Power (25%) + Backlinks (25%) + Page Power (25%) + Intent (25%). Lower score = easier to rank.'
+  },
+  drAvg: {
+    title: 'DR Average (Top 10)',
+    description: 'Average Domain Rating of the top 10 ranking pages. DR measures overall domain authority on a 0-100 scale. Lower DR = weaker competition.'
+  },
+  drMin: {
+    title: 'DR Minimum (Top 10)',
+    description: 'Lowest Domain Rating among the top 10 results. Shows the weakest competitor currently ranking. If low, there\'s opportunity to compete.'
+  },
+  rdAvg: {
+    title: 'Referring Domains Avg',
+    description: 'Average number of unique dofollow referring domains (backlinks) to the top 10 pages. Fewer RDs = less link building required to compete.'
+  },
+  urAvg: {
+    title: 'UR Average (Top 10)',
+    description: 'Average URL Rating of top 10 pages. UR measures individual page authority (0-100). Lower UR = easier to outrank with quality content.'
+  },
+  domain: {
+    title: 'Domain Score',
+    description: 'Difficulty score based on domain authority metrics (DR avg, min, max). Calculated from how strong the competing domains are. 0-100, lower = easier.'
+  },
+  backlinks: {
+    title: 'Backlinks Score',
+    description: 'Difficulty score based on backlink requirements (referring domains count). Shows how many quality backlinks you\'ll need. 0-100, lower = easier.'
+  },
+  page: {
+    title: 'Page Score',
+    description: 'Difficulty score based on individual page strength (URL Rating). Indicates on-page optimization level of competitors. 0-100, lower = easier.'
+  },
+  intent: {
+    title: 'Intent Score',
+    description: 'Score based on search intent analysis (informational, commercial, transactional). Considers SERP features, brand presence, and local intent. 0-100, lower = better fit.'
+  },
+  siteType: {
+    title: 'Recommended Site Type',
+    description: 'AI recommendation for the type of site needed to rank: Small Site (up to 5 pages), Mini Site (up to 20 pages), or Authority Blog (content-heavy site).'
+  },
+  flags: {
+    title: 'Flags',
+    description: 'Special indicators: SERP Locked = dominated by big brands/specific sites, Local = has local search intent requiring geo-targeting.'
+  }
+};
 
 export interface SelectedKeywordForBulk {
   keyword: string;
@@ -281,23 +348,60 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
   const allSelected = filteredAndSortedResults.length > 0 && 
     filteredAndSortedResults.every(r => selectedIds.has(r.id));
 
-  const SortHeader = ({ label, sortKeyValue }: { label: string; sortKeyValue: SortKey }) => (
-    <TableHead 
-      className="cursor-pointer hover:bg-muted/50 select-none"
-      onClick={() => handleSort(sortKeyValue)}
-    >
-      <div className="flex items-center gap-1">
-        {label}
-        {sortKey === sortKeyValue ? (
-          sortOrder === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
-        ) : (
-          <ArrowUpDown className="h-3 w-3 opacity-30" />
-        )}
-      </div>
-    </TableHead>
-  );
+  const SortHeader = ({ label, sortKeyValue, tooltipKey }: { label: string; sortKeyValue: SortKey; tooltipKey?: string }) => {
+    const tooltip = columnTooltips[tooltipKey || sortKeyValue];
+    return (
+      <TableHead 
+        className="cursor-pointer hover:bg-muted/50 select-none"
+        onClick={() => handleSort(sortKeyValue)}
+      >
+        <div className="flex items-center gap-1">
+          {label}
+          {tooltip && (
+            <Tooltip>
+              <TooltipTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs">
+                <p className="font-semibold text-sm">{tooltip.title}</p>
+                <p className="text-xs text-muted-foreground mt-1">{tooltip.description}</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+          {sortKey === sortKeyValue ? (
+            sortOrder === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
+          ) : (
+            <ArrowUpDown className="h-3 w-3 opacity-30" />
+          )}
+        </div>
+      </TableHead>
+    );
+  };
+
+  const StaticHeader = ({ label, tooltipKey }: { label: string; tooltipKey: string }) => {
+    const tooltip = columnTooltips[tooltipKey];
+    return (
+      <TableHead>
+        <div className="flex items-center gap-1">
+          {label}
+          {tooltip && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs">
+                <p className="font-semibold text-sm">{tooltip.title}</p>
+                <p className="text-xs text-muted-foreground mt-1">{tooltip.description}</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </div>
+      </TableHead>
+    );
+  };
 
   return (
+    <TooltipProvider>
     <Card className="mt-6">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
@@ -399,20 +503,20 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                       />
                     </TableHead>
                   )}
-                  <SortHeader label="Keyword" sortKeyValue="keyword" />
-                  <TableHead>GEO</TableHead>
-                  <SortHeader label="Volume" sortKeyValue="volume" />
-                  <SortHeader label="Score" sortKeyValue="score" />
-                  <SortHeader label="DR Avg" sortKeyValue="drAvg" />
-                  <SortHeader label="DR Min" sortKeyValue="drMin" />
-                  <SortHeader label="RD Avg" sortKeyValue="rdAvg" />
-                  <SortHeader label="UR Avg" sortKeyValue="urAvg" />
-                  <TableHead>Domain</TableHead>
-                  <TableHead>Backlinks</TableHead>
-                  <TableHead>Page</TableHead>
-                  <TableHead>Intent</TableHead>
-                  <SortHeader label="Site Type" sortKeyValue="siteType" />
-                  <TableHead>Flags</TableHead>
+                  <SortHeader label="Keyword" sortKeyValue="keyword" tooltipKey="keyword" />
+                  <StaticHeader label="GEO" tooltipKey="geo" />
+                  <SortHeader label="Volume" sortKeyValue="volume" tooltipKey="volume" />
+                  <SortHeader label="Score" sortKeyValue="score" tooltipKey="score" />
+                  <SortHeader label="DR Avg" sortKeyValue="drAvg" tooltipKey="drAvg" />
+                  <SortHeader label="DR Min" sortKeyValue="drMin" tooltipKey="drMin" />
+                  <SortHeader label="RD Avg" sortKeyValue="rdAvg" tooltipKey="rdAvg" />
+                  <SortHeader label="UR Avg" sortKeyValue="urAvg" tooltipKey="urAvg" />
+                  <StaticHeader label="Domain" tooltipKey="domain" />
+                  <StaticHeader label="Backlinks" tooltipKey="backlinks" />
+                  <StaticHeader label="Page" tooltipKey="page" />
+                  <StaticHeader label="Intent" tooltipKey="intent" />
+                  <SortHeader label="Site Type" sortKeyValue="siteType" tooltipKey="siteType" />
+                  <StaticHeader label="Flags" tooltipKey="flags" />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -532,6 +636,7 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
         </div>
       </CardContent>
     </Card>
+    </TooltipProvider>
   );
 };
 
