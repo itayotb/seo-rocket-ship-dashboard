@@ -6,12 +6,14 @@ import { useDashboardState } from '@/hooks/useDashboardState';
 import { useWebsiteData } from '@/hooks/useWebsiteData';
 import { useLeadForms } from '@/hooks/useLeadForms';
 import { useCredentials } from '@/hooks/useCredentials';
+import { usePermissions } from '@/hooks/usePermissions';
 import { ALL_TEMPLATES } from '@/utils/templates';
 
 const Index = () => {
   const { websites, addWebsite, bulkUpdateLeadForm } = useWebsiteData();
   const { leadForms, addLeadForm, updateLeadForm, deleteLeadForm, getLeadFormByTemplateId } = useLeadForms();
   const { credentials, addCredential, updateCredential, deleteCredential } = useCredentials();
+  const { users, rolePermissions, addUser, updateUser, deleteUser } = usePermissions();
   const {
     activeSection,
     setActiveSection,
@@ -91,6 +93,11 @@ const Index = () => {
         onAddCredential={addCredential}
         onUpdateCredential={updateCredential}
         onDeleteCredential={deleteCredential}
+        users={users}
+        rolePermissions={rolePermissions}
+        onAddUser={addUser}
+        onUpdateUser={updateUser}
+        onDeleteUser={deleteUser}
       />
     </DashboardLayout>
   );

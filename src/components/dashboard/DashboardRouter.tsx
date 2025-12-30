@@ -9,6 +9,7 @@ import DomainsManagement from '@/components/domains/DomainsManagement';
 import ReportsDashboard from '@/components/reports/ReportsDashboard';
 import LeadFormsManagement from '@/components/leadforms/LeadFormsManagement';
 import CredentialsManagement from '@/components/credentials/CredentialsManagement';
+import PermissionsManagement from '@/components/permissions/PermissionsManagement';
 import CreateWebsiteButton from '@/components/dashboard/CreateWebsiteButton';
 import { 
   ToolsPlaceholder, 
@@ -18,6 +19,7 @@ import { Website } from '@/types/website';
 import { CreatedWebsite, Template } from '@/types/websiteCreation';
 import { LeadForm } from '@/types/leadForm';
 import { Credential } from '@/types/credential';
+import { AppUser, UserRole, RolePermission } from '@/types/permission';
 
 interface DashboardRouterProps {
   activeSection: string;
@@ -48,6 +50,12 @@ interface DashboardRouterProps {
   onAddCredential: (name: string, username: string, password: string, apiKey: string, category: string) => void;
   onUpdateCredential: (id: string, name: string, username: string, password: string, apiKey: string, category: string) => void;
   onDeleteCredential: (id: string) => void;
+  // Permissions props
+  users: AppUser[];
+  rolePermissions: RolePermission[];
+  onAddUser: (email: string, fullName: string, role: UserRole) => void;
+  onUpdateUser: (id: string, data: Partial<Omit<AppUser, 'id' | 'createdAt'>>) => void;
+  onDeleteUser: (id: string) => void;
   bulkActions: {
     checkAllParameters: (websites: Website[]) => Promise<void>;
     bulkKeywordUpdate: (websites: Website[]) => Promise<void>;
@@ -87,6 +95,11 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
   onAddCredential,
   onUpdateCredential,
   onDeleteCredential,
+  users,
+  rolePermissions,
+  onAddUser,
+  onUpdateUser,
+  onDeleteUser,
   bulkActions
 }) => {
   const navigate = useNavigate();
@@ -176,6 +189,16 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
         return <ReportsDashboard masterCategoryFilter={masterCategoryFilter} />;
       case 'cloudflare':
         return <CloudflareSettings />;
+      case 'permissions':
+        return (
+          <PermissionsManagement
+            users={users}
+            rolePermissions={rolePermissions}
+            onAddUser={onAddUser}
+            onUpdateUser={onUpdateUser}
+            onDeleteUser={onDeleteUser}
+          />
+        );
       case 'tools':
         return <ToolsPlaceholder />;
       case 'settings':
