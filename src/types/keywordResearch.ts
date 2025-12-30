@@ -46,6 +46,9 @@ export const defaultFilters: FiltersState = {
 
 // Analysis Types
 export interface DomainPowerAnalysis {
+  drAvgTop5: number;
+  drMinTop5: number;
+  drMaxTop5: number;
   drAvgTop10: number;
   drMinTop10: number;
   drMaxTop10: number;
@@ -53,6 +56,8 @@ export interface DomainPowerAnalysis {
 }
 
 export interface BacklinksAnalysis {
+  rdAvgDofollowTop5: number;
+  rdMinDofollowTop5: number;
   rdAvgDofollowTop10: number;
   rdMinDofollowTop10: number;
   refDomainsTrafficTotal: number;
@@ -60,6 +65,7 @@ export interface BacklinksAnalysis {
 }
 
 export interface PagePowerAnalysis {
+  urAvgTop5: number;
   urAvgTop10: number;
   score: number;
 }
@@ -93,4 +99,12 @@ export interface AnalyzedKeyword {
   ahrefsDifficulty: number;
   intentsRaw: string;
   analysis: KeywordAnalysis;
+}
+
+// Parameter for display
+export interface AnalysisParameter {
+  key: string;
+  label: string;
+  value: number;
+  category: 'domain' | 'backlinks' | 'page' | 'intent' | 'scores';
 }

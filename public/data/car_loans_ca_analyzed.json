@@ -8,18 +8,24 @@
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
     "analysis": {
       "domainPower": {
+        "drAvgTop5": 58,
+        "drMinTop5": 25,
+        "drMaxTop5": 82,
         "drAvgTop10": 52,
         "drMinTop10": 18,
         "drMaxTop10": 82,
         "score": 58
       },
       "backlinks": {
+        "rdAvgDofollowTop5": 42,
+        "rdMinDofollowTop5": 8,
         "rdAvgDofollowTop10": 34,
         "rdMinDofollowTop10": 3,
         "refDomainsTrafficTotal": 320000,
         "score": 63
       },
       "pagePower": {
+        "urAvgTop5": 35,
         "urAvgTop10": 29,
         "score": 44
       },
@@ -47,18 +53,24 @@
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
     "analysis": {
       "domainPower": {
+        "drAvgTop5": 68,
+        "drMinTop5": 35,
+        "drMaxTop5": 88,
         "drAvgTop10": 60,
         "drMinTop10": 22,
         "drMaxTop10": 88,
         "score": 66
       },
       "backlinks": {
+        "rdAvgDofollowTop5": 58,
+        "rdMinDofollowTop5": 12,
         "rdAvgDofollowTop10": 48,
         "rdMinDofollowTop10": 5,
         "refDomainsTrafficTotal": 520000,
         "score": 72
       },
       "pagePower": {
+        "urAvgTop5": 42,
         "urAvgTop10": 36,
         "score": 52
       },
@@ -86,18 +98,24 @@
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
     "analysis": {
       "domainPower": {
+        "drAvgTop5": 50,
+        "drMinTop5": 20,
+        "drMaxTop5": 79,
         "drAvgTop10": 44,
         "drMinTop10": 15,
         "drMaxTop10": 79,
         "score": 49
       },
       "backlinks": {
+        "rdAvgDofollowTop5": 28,
+        "rdMinDofollowTop5": 4,
         "rdAvgDofollowTop10": 22,
         "rdMinDofollowTop10": 1,
         "refDomainsTrafficTotal": 210000,
         "score": 48
       },
       "pagePower": {
+        "urAvgTop5": 30,
         "urAvgTop10": 24,
         "score": 38
       },
@@ -125,18 +143,24 @@
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
     "analysis": {
       "domainPower": {
+        "drAvgTop5": 65,
+        "drMinTop5": 30,
+        "drMaxTop5": 86,
         "drAvgTop10": 58,
         "drMinTop10": 21,
         "drMaxTop10": 86,
         "score": 63
       },
       "backlinks": {
+        "rdAvgDofollowTop5": 50,
+        "rdMinDofollowTop5": 10,
         "rdAvgDofollowTop10": 40,
         "rdMinDofollowTop10": 4,
         "refDomainsTrafficTotal": 450000,
         "score": 68
       },
       "pagePower": {
+        "urAvgTop5": 38,
         "urAvgTop10": 32,
         "score": 48
       },
@@ -164,18 +188,24 @@
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
     "analysis": {
       "domainPower": {
+        "drAvgTop5": 42,
+        "drMinTop5": 15,
+        "drMaxTop5": 70,
         "drAvgTop10": 38,
         "drMinTop10": 10,
         "drMaxTop10": 70,
         "score": 42
       },
       "backlinks": {
+        "rdAvgDofollowTop5": 18,
+        "rdMinDofollowTop5": 2,
         "rdAvgDofollowTop10": 14,
         "rdMinDofollowTop10": 0,
         "refDomainsTrafficTotal": 120000,
         "score": 40
       },
       "pagePower": {
+        "urAvgTop5": 24,
         "urAvgTop10": 19,
         "score": 32
       },
@@ -203,18 +233,24 @@
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
     "analysis": {
       "domainPower": {
+        "drAvgTop5": 52,
+        "drMinTop5": 22,
+        "drMaxTop5": 80,
         "drAvgTop10": 46,
         "drMinTop10": 16,
         "drMaxTop10": 80,
         "score": 51
       },
       "backlinks": {
+        "rdAvgDofollowTop5": 32,
+        "rdMinDofollowTop5": 5,
         "rdAvgDofollowTop10": 26,
         "rdMinDofollowTop10": 2,
         "refDomainsTrafficTotal": 260000,
         "score": 55
       },
       "pagePower": {
+        "urAvgTop5": 32,
         "urAvgTop10": 27,
         "score": 42
       },
@@ -242,18 +278,24 @@
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local",
     "analysis": {
       "domainPower": {
+        "drAvgTop5": 48,
+        "drMinTop5": 18,
+        "drMaxTop5": 75,
         "drAvgTop10": 42,
         "drMinTop10": 13,
         "drMaxTop10": 75,
         "score": 47
       },
       "backlinks": {
+        "rdAvgDofollowTop5": 24,
+        "rdMinDofollowTop5": 3,
         "rdAvgDofollowTop10": 18,
         "rdMinDofollowTop10": 1,
         "refDomainsTrafficTotal": 150000,
         "score": 45
       },
       "pagePower": {
+        "urAvgTop5": 28,
         "urAvgTop10": 22,
         "score": 36
       },
@@ -281,18 +323,24 @@
     "intentsRaw": "Informational,Commercial,Non-branded,Local",
     "analysis": {
       "domainPower": {
+        "drAvgTop5": 45,
+        "drMinTop5": 16,
+        "drMaxTop5": 72,
         "drAvgTop10": 40,
         "drMinTop10": 12,
         "drMaxTop10": 72,
         "score": 44
       },
       "backlinks": {
+        "rdAvgDofollowTop5": 20,
+        "rdMinDofollowTop5": 2,
         "rdAvgDofollowTop10": 16,
         "rdMinDofollowTop10": 0,
         "refDomainsTrafficTotal": 130000,
         "score": 42
       },
       "pagePower": {
+        "urAvgTop5": 26,
         "urAvgTop10": 20,
         "score": 34
       },
@@ -320,18 +368,24 @@
     "intentsRaw": "Informational,Commercial,Non-branded,Local",
     "analysis": {
       "domainPower": {
+        "drAvgTop5": 44,
+        "drMinTop5": 15,
+        "drMaxTop5": 70,
         "drAvgTop10": 39,
         "drMinTop10": 11,
         "drMaxTop10": 70,
         "score": 43
       },
       "backlinks": {
+        "rdAvgDofollowTop5": 18,
+        "rdMinDofollowTop5": 2,
         "rdAvgDofollowTop10": 15,
         "rdMinDofollowTop10": 0,
         "refDomainsTrafficTotal": 110000,
         "score": 40
       },
       "pagePower": {
+        "urAvgTop5": 24,
         "urAvgTop10": 19,
         "score": 32
       },
@@ -359,18 +413,24 @@
     "intentsRaw": "Informational,Non-branded,Non-local",
     "analysis": {
       "domainPower": {
+        "drAvgTop5": 42,
+        "drMinTop5": 14,
+        "drMaxTop5": 69,
         "drAvgTop10": 37,
         "drMinTop10": 10,
         "drMaxTop10": 69,
         "score": 41
       },
       "backlinks": {
+        "rdAvgDofollowTop5": 16,
+        "rdMinDofollowTop5": 1,
         "rdAvgDofollowTop10": 13,
         "rdMinDofollowTop10": 0,
         "refDomainsTrafficTotal": 100000,
         "score": 38
       },
       "pagePower": {
+        "urAvgTop5": 22,
         "urAvgTop10": 18,
         "score": 30
       },
