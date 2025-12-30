@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { WebsiteCreationData } from '@/types/websiteCreation';
+import { LeadForm } from '@/types/leadForm';
 import { ALL_TEMPLATES } from '@/utils/templates';
 import TemplateSearchFilter from './TemplateSearchFilter';
 import TemplateGrid from './TemplateGrid';
@@ -9,9 +10,10 @@ import TemplateGrid from './TemplateGrid';
 interface WebsiteStepThreeProps {
   data: WebsiteCreationData;
   onUpdate: (updates: Partial<WebsiteCreationData>) => void;
+  leadForms?: LeadForm[];
 }
 
-const WebsiteStepThree = ({ data, onUpdate }: WebsiteStepThreeProps) => {
+const WebsiteStepThree = ({ data, onUpdate, leadForms = [] }: WebsiteStepThreeProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState(data.category || 'all');
   
@@ -33,7 +35,12 @@ const WebsiteStepThree = ({ data, onUpdate }: WebsiteStepThreeProps) => {
   });
 
   const selectTemplate = (templateId: string) => {
-    onUpdate({ template: templateId });
+    // Auto-select lead form if template has one associated
+    const associatedLeadForm = leadForms.find(form => form.templateId === templateId);
+    onUpdate({ 
+      template: templateId,
+      leadFormId: associatedLeadForm?.id || data.leadFormId
+    });
   };
 
   const categoryTemplates = sortedTemplates.filter(t => t.category === data.category);
