@@ -55,24 +55,81 @@ const BulkStepTemplate = ({
     if (checked) {
       const template = templates.find((t) => t.id === templateId);
       if (template && templateDistribution.length < 5) {
+        // Auto-balance: new template gets equal share, others adjust
+        const newCount = templateDistribution.length + 1;
+        const equalShare = Math.floor(100 / newCount);
+        const remainder = 100 - (equalShare * newCount);
+        
+        const updated = templateDistribution.map((d, idx) => ({
+          ...d,
+          percentage: equalShare + (idx === 0 ? remainder : 0),
+        }));
+        
         onTemplateDistributionChange([
-          ...templateDistribution,
-          { templateId, templateName: template.name, percentage: 0 },
+          ...updated,
+          { templateId, templateName: template.name, percentage: equalShare },
         ]);
       }
     } else {
-      onTemplateDistributionChange(
-        templateDistribution.filter((d) => d.templateId !== templateId)
-      );
+      const remaining = templateDistribution.filter((d) => d.templateId !== templateId);
+      if (remaining.length > 0) {
+        // Redistribute 100% among remaining
+        const equalShare = Math.floor(100 / remaining.length);
+        const remainder = 100 - (equalShare * remaining.length);
+        const updated = remaining.map((d, idx) => ({
+          ...d,
+          percentage: equalShare + (idx === 0 ? remainder : 0),
+        }));
+        onTemplateDistributionChange(updated);
+      } else {
+        onTemplateDistributionChange([]);
+      }
     }
   };
 
-  const handlePercentageChange = (templateId: string, percentage: number) => {
-    onTemplateDistributionChange(
-      templateDistribution.map((d) =>
-        d.templateId === templateId ? { ...d, percentage } : d
-      )
-    );
+  const handlePercentageChange = (templateId: string, newPercentage: number) => {
+    const otherItems = templateDistribution.filter((d) => d.templateId !== templateId);
+    const currentItem = templateDistribution.find((d) => d.templateId === templateId);
+    
+    if (!currentItem || otherItems.length === 0) {
+      // Only one item, force to 100%
+      onTemplateDistributionChange(
+        templateDistribution.map((d) => ({ ...d, percentage: 100 }))
+      );
+      return;
+    }
+
+    // Calculate how much is left for others
+    const remainingForOthers = 100 - newPercentage;
+    
+    // Distribute remaining proportionally among others
+    const currentOtherTotal = otherItems.reduce((sum, d) => sum + d.percentage, 0);
+    
+    const updated = templateDistribution.map((d) => {
+      if (d.templateId === templateId) {
+        return { ...d, percentage: newPercentage };
+      }
+      // Distribute remaining proportionally
+      if (currentOtherTotal > 0) {
+        const proportion = d.percentage / currentOtherTotal;
+        return { ...d, percentage: Math.round(remainingForOthers * proportion) };
+      }
+      // Equal distribution if all others were 0
+      return { ...d, percentage: Math.round(remainingForOthers / otherItems.length) };
+    });
+
+    // Fix rounding errors
+    const total = updated.reduce((sum, d) => sum + d.percentage, 0);
+    if (total !== 100 && updated.length > 0) {
+      const diff = 100 - total;
+      // Add difference to the first non-changed item
+      const firstOtherIdx = updated.findIndex((d) => d.templateId !== templateId);
+      if (firstOtherIdx >= 0) {
+        updated[firstOtherIdx].percentage += diff;
+      }
+    }
+
+    onTemplateDistributionChange(updated);
   };
 
   const isTemplateSelected = (templateId: string) => {
