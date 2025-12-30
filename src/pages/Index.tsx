@@ -7,7 +7,7 @@ import { useWebsiteData } from '@/hooks/useWebsiteData';
 import { useLeadForms } from '@/hooks/useLeadForms';
 
 const Index = () => {
-  const { websites, addWebsite } = useWebsiteData();
+  const { websites, addWebsite, bulkUpdateLeadForm } = useWebsiteData();
   const { leadForms, addLeadForm, updateLeadForm, deleteLeadForm } = useLeadForms();
   const {
     activeSection,
@@ -82,6 +82,7 @@ const Index = () => {
         onAddLeadForm={addLeadForm}
         onUpdateLeadForm={updateLeadForm}
         onDeleteLeadForm={deleteLeadForm}
+        onBulkLeadFormChange={bulkUpdateLeadForm}
       />
     </DashboardLayout>
   );

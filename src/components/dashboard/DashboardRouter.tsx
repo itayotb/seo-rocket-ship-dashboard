@@ -40,6 +40,7 @@ interface DashboardRouterProps {
   onAddLeadForm: (name: string, code: string) => void;
   onUpdateLeadForm: (id: string, name: string, code: string) => void;
   onDeleteLeadForm: (id: string) => void;
+  onBulkLeadFormChange: (websiteIds: string[], leadFormId: string | undefined) => void;
   bulkActions: {
     checkAllParameters: (websites: Website[]) => Promise<void>;
     bulkKeywordUpdate: (websites: Website[]) => Promise<void>;
@@ -73,6 +74,7 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
   onAddLeadForm,
   onUpdateLeadForm,
   onDeleteLeadForm,
+  onBulkLeadFormChange,
   bulkActions
 }) => {
   const navigate = useNavigate();
@@ -136,6 +138,8 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
               onClearSelection={onClearSelection}
               isProcessing={isProcessing}
               onBulkOperation={onBulkOperation}
+              leadForms={leadForms}
+              onBulkLeadFormChange={onBulkLeadFormChange}
               bulkActions={bulkActions}
             />
           </div>
@@ -185,6 +189,8 @@ const DashboardRouter: React.FC<DashboardRouterProps> = ({
               onClearSelection={onClearSelection}
               isProcessing={isProcessing}
               onBulkOperation={onBulkOperation}
+              leadForms={leadForms}
+              onBulkLeadFormChange={onBulkLeadFormChange}
               bulkActions={bulkActions}
             />
           </div>

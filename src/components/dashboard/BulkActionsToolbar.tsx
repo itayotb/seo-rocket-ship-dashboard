@@ -10,8 +10,8 @@ import {
   Activity, 
   ToggleLeft,
   X,
-  Play,
-  CheckCheck
+  CheckCheck,
+  FileCode
 } from 'lucide-react';
 
 interface BulkActionsToolbarProps {
@@ -23,6 +23,7 @@ interface BulkActionsToolbarProps {
   onBulkSeoAnalysis: () => void;
   onBulkStatusCheck: () => void;
   onCheckAllParameters: () => void;
+  onBulkLeadFormChange: () => void;
   isProcessing: boolean;
 }
 
@@ -35,13 +36,14 @@ const BulkActionsToolbar: React.FC<BulkActionsToolbarProps> = ({
   onBulkSeoAnalysis,
   onBulkStatusCheck,
   onCheckAllParameters,
+  onBulkLeadFormChange,
   isProcessing
 }) => {
   if (selectedCount === 0) return null;
 
   return (
     <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
           <Badge variant="default" className="bg-blue-600">
             {selectedCount} website{selectedCount !== 1 ? 's' : ''} selected
@@ -57,7 +59,7 @@ const BulkActionsToolbar: React.FC<BulkActionsToolbarProps> = ({
           </Button>
         </div>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             onClick={onCheckAllParameters}
             disabled={isProcessing}
@@ -68,7 +70,17 @@ const BulkActionsToolbar: React.FC<BulkActionsToolbarProps> = ({
             Check All Parameters
           </Button>
           
-          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" />
+          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 hidden sm:block" />
+          
+          <Button
+            onClick={onBulkLeadFormChange}
+            disabled={isProcessing}
+            size="sm"
+            className="bg-orange-600 hover:bg-orange-700"
+          >
+            <FileCode className="h-4 w-4 mr-2" />
+            Lead Form
+          </Button>
           
           <Button
             onClick={onBulkKeywordUpdate}
