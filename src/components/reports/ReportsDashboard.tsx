@@ -9,7 +9,11 @@ import RecentReports from './RecentReports';
 import HistoricalChartsSection from './HistoricalChartsSection';
 import { ReportTemplate, ReportFilters as ReportFiltersType } from '@/types/reports';
 
-const ReportsDashboard: React.FC = () => {
+interface ReportsDashboardProps {
+  masterCategoryFilter: string;
+}
+
+const ReportsDashboard: React.FC<ReportsDashboardProps> = ({ masterCategoryFilter }) => {
   const [selectedTemplate, setSelectedTemplate] = useState<ReportTemplate | null>(null);
   const [filters, setFilters] = useState<ReportFiltersType>({
     timeframe: '30d',
@@ -71,6 +75,11 @@ const ReportsDashboard: React.FC = () => {
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Reports</h2>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
             Generate and export SEO reports for your websites
+            {masterCategoryFilter !== 'all' && (
+              <span className="ml-2 text-blue-600 dark:text-blue-400">
+                (filtered by {masterCategoryFilter})
+              </span>
+            )}
           </p>
         </div>
         

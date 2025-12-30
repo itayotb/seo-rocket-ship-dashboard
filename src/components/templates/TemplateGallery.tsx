@@ -21,7 +21,11 @@ export interface Template {
   previewUrl?: string;
 }
 
-const TemplateGallery = () => {
+interface TemplateGalleryProps {
+  masterCategoryFilter: string;
+}
+
+const TemplateGallery: React.FC<TemplateGalleryProps> = ({ masterCategoryFilter }) => {
   const {
     selectedTemplate,
     setSelectedTemplate,
@@ -38,8 +42,14 @@ const TemplateGallery = () => {
     availableCategories,
     filteredTemplates,
     handleCategoryAdded,
-    toggleFavorite
+    toggleFavorite,
+    setMasterFilter
   } = useTemplateGallery();
+
+  // Sync with master category filter
+  React.useEffect(() => {
+    setMasterFilter(masterCategoryFilter);
+  }, [masterCategoryFilter, setMasterFilter]);
 
   const handlePreview = (template: Template) => {
     setSelectedTemplate(template);
