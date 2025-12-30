@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useKeywordResearch } from '@/hooks/useKeywordResearch';
 import SearchHeader from './SearchHeader';
 import FiltersPanel from './FiltersPanel';
@@ -11,6 +11,8 @@ import { Info } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const KeywordResearchDashboard: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('keywords');
+  
   const {
     allKeywords,
     filteredKeywords,
@@ -28,6 +30,18 @@ const KeywordResearchDashboard: React.FC = () => {
     analyzeSelected,
     closeAnalysis,
   } = useKeywordResearch();
+
+  // Switch to analysis tab when results are ready
+  useEffect(() => {
+    if (showAnalysis && analysisResults.length > 0) {
+      setActiveTab('analysis');
+    }
+  }, [showAnalysis, analysisResults]);
+
+  const handleCloseAnalysis = () => {
+    closeAnalysis();
+    setActiveTab('keywords');
+  };
 
   return (
     <div className="space-y-6">
@@ -52,7 +66,7 @@ const KeywordResearchDashboard: React.FC = () => {
       />
 
       {isLoaded && (
-        <Tabs defaultValue="keywords" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList>
             <TabsTrigger value="keywords">Keywords</TabsTrigger>
             <TabsTrigger value="analysis" disabled={!showAnalysis}>
@@ -89,7 +103,7 @@ const KeywordResearchDashboard: React.FC = () => {
             {showAnalysis && analysisResults.length > 0 && (
               <AnalysisResultsPanel 
                 results={analysisResults} 
-                onClose={closeAnalysis}
+                onClose={handleCloseAnalysis}
               />
             )}
           </TabsContent>
