@@ -1,8 +1,8 @@
 
-export type IntentType = "Informational" | "Commercial" | "Transactional" | "Navigational";
+export type IntentType = "Informational" | "Commercial" | "Transactional" | "Navigational" | "Mixed";
 export type BrandType = "Branded" | "Non-branded";
 export type LocationType = "Local" | "Non-local";
-export type DifficultyLabel = "easy" | "medium" | "hard";
+export type DifficultyLabel = "very_easy" | "easy" | "medium" | "challenging" | "hard" | "extreme";
 export type RecommendedSiteType = "small_site" | "mini_site" | "authority_blog";
 
 export interface KeywordRow {
@@ -66,9 +66,9 @@ export interface PagePowerAnalysis {
 
 export interface IntentAnalysis {
   mainIntent: IntentType;
-  serpLocked: boolean;
   branded: boolean;
   local: boolean;
+  score: number;
 }
 
 export interface KeywordAnalysis {
@@ -76,7 +76,6 @@ export interface KeywordAnalysis {
   backlinks: BacklinksAnalysis;
   pagePower: PagePowerAnalysis;
   intent: IntentAnalysis;
-  uxTrustScore: number;
   serpStabilityScore: number;
   difficultyScore: number;
   difficultyLabel: DifficultyLabel;
@@ -88,7 +87,6 @@ export interface AnalyzedKeyword {
   keyword: string;
   country: string;
   volume: number;
-  ahrefsDifficulty: number;
   intentsRaw: string;
   analysis: KeywordAnalysis;
 }

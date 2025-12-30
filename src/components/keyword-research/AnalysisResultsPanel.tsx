@@ -87,13 +87,17 @@ const columnTooltips: Record<string, { title: string; description: string }> = {
     title: 'Page Score',
     description: 'Difficulty score based on individual page strength (URL Rating). Indicates on-page optimization level of competitors. 0-100, lower = easier.'
   },
+  intent: {
+    title: 'Intent Score',
+    description: 'Score based on search intent analysis. Commercial/Transactional = 80, Informational = 65, Navigational = 85, Mixed = 40. +10 if branded, +5 if local.'
+  },
   siteType: {
     title: 'Recommended Site Type',
-    description: 'AI recommendation for the type of site needed to rank: Small Site (up to 5 pages), Mini Site (up to 20 pages), or Authority Blog (content-heavy site).'
+    description: 'Recommendation for the type of site needed to rank: Small Site (1-4 pages), Mini Site (up to 10 pages), or Authority Blog (content-heavy site).'
   },
   flags: {
     title: 'Flags',
-    description: 'Special indicators: SERP Locked = dominated by big brands/specific sites, Local = has local search intent requiring geo-targeting.'
+    description: 'Special indicators: Local = has local search intent requiring geo-targeting.'
   }
 };
 
@@ -109,14 +113,14 @@ interface AnalysisResultsPanelProps {
 }
 
 const getScoreColor = (score: number) => {
-  if (score <= 40) return 'text-green-600';
-  if (score <= 60) return 'text-yellow-600';
+  if (score <= 35) return 'text-green-600';
+  if (score <= 65) return 'text-yellow-600';
   return 'text-red-600';
 };
 
 const getScoreBgColor = (score: number) => {
-  if (score <= 40) return 'bg-green-100 text-green-800';
-  if (score <= 60) return 'bg-yellow-100 text-yellow-800';
+  if (score <= 35) return 'bg-green-100 text-green-800';
+  if (score <= 65) return 'bg-yellow-100 text-yellow-800';
   return 'bg-red-100 text-red-800';
 };
 
@@ -207,14 +211,13 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
       filtered = filtered.filter(r => r.analysis.recommendedSiteType === siteTypeFilter);
     }
 
-    // Score filter
+    // Score filter based on difficultyScore
     if (scoreFilter !== 'all') {
       filtered = filtered.filter(r => {
-        const score = r.analysis.domainPower.score + r.analysis.backlinks.score + r.analysis.pagePower.score;
-        const avgScore = score / 3;
-        if (scoreFilter === 'easy') return avgScore <= 40;
-        if (scoreFilter === 'medium') return avgScore > 40 && avgScore <= 60;
-        if (scoreFilter === 'hard') return avgScore > 60;
+        const score = r.analysis.difficultyScore;
+        if (scoreFilter === 'easy') return score <= 35;
+        if (scoreFilter === 'medium') return score > 35 && score <= 65;
+        if (scoreFilter === 'hard') return score > 65;
         return true;
       });
     }
@@ -234,8 +237,8 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
           bVal = b.volume;
           break;
         case 'score':
-          aVal = (a.analysis.domainPower.score + a.analysis.backlinks.score + a.analysis.pagePower.score) / 3;
-          bVal = (b.analysis.domainPower.score + b.analysis.backlinks.score + b.analysis.pagePower.score) / 3;
+          aVal = a.analysis.difficultyScore;
+          bVal = b.analysis.difficultyScore;
           break;
         case 'drAvg':
           aVal = a.analysis.domainPower.drAvgTop10;
@@ -284,19 +287,19 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
       'Domain Score',
       'Backlinks Score',
       'Page Score',
-      'UX Trust',
+      'Intent Score',
       'SERP Stability',
+      'Difficulty Score',
+      'Difficulty Label',
       'Site Type',
-      'SERP Locked',
       'Local'
     ];
 
     const rows = filteredAndSortedResults.map(r => {
-      const avgScore = Math.round((r.analysis.domainPower.score + r.analysis.backlinks.score + r.analysis.pagePower.score) / 3);
       return [
         r.keyword,
         r.volume,
-        avgScore,
+        Math.round(r.analysis.difficultyScore),
         r.analysis.domainPower.drAvgTop10,
         r.analysis.domainPower.drMinTop10,
         r.analysis.domainPower.drMaxTop10,
@@ -306,10 +309,11 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
         r.analysis.domainPower.score,
         r.analysis.backlinks.score,
         r.analysis.pagePower.score,
-        r.analysis.uxTrustScore,
+        r.analysis.intent.score,
         r.analysis.serpStabilityScore,
+        r.analysis.difficultyScore,
+        r.analysis.difficultyLabel,
         getSiteTypeInfo(r.analysis.recommendedSiteType).label,
-        r.analysis.intent.serpLocked ? 'Yes' : 'No',
         r.analysis.intent.local ? 'Yes' : 'No'
       ];
     });
@@ -461,9 +465,9 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Scores</SelectItem>
-              <SelectItem value="easy">Easy (≤40)</SelectItem>
-              <SelectItem value="medium">Medium (41-60)</SelectItem>
-              <SelectItem value="hard">Hard (&gt;60)</SelectItem>
+              <SelectItem value="easy">Easy (≤35)</SelectItem>
+              <SelectItem value="medium">Medium (36-65)</SelectItem>
+              <SelectItem value="hard">Hard (&gt;65)</SelectItem>
             </SelectContent>
           </Select>
 
@@ -506,6 +510,7 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                   <StaticHeader label="Domain" tooltipKey="domain" />
                   <StaticHeader label="Backlinks" tooltipKey="backlinks" />
                   <StaticHeader label="Page" tooltipKey="page" />
+                  <StaticHeader label="Intent" tooltipKey="intent" />
                   <SortHeader label="Site Type" sortKeyValue="siteType" tooltipKey="siteType" />
                   <StaticHeader label="Flags" tooltipKey="flags" />
                 </TableRow>
@@ -513,7 +518,7 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
               <TableBody>
                 {filteredAndSortedResults.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={onCreateBulkWebsites ? 14 : 13} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={onCreateBulkWebsites ? 15 : 14} className="text-center text-muted-foreground py-8">
                       No results match your filters
                     </TableCell>
                   </TableRow>
@@ -521,7 +526,6 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                   filteredAndSortedResults.map((result) => {
                     const siteInfo = getSiteTypeInfo(result.analysis.recommendedSiteType);
                     const SiteIcon = siteInfo.icon;
-                    const avgScore = Math.round((result.analysis.domainPower.score + result.analysis.backlinks.score + result.analysis.pagePower.score) / 3);
                     const isSelected = selectedIds.has(result.id);
 
                     return (
@@ -547,8 +551,8 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                         </TableCell>
                         <TableCell>{result.volume.toLocaleString()}</TableCell>
                         <TableCell>
-                          <Badge className={`${getScoreBgColor(avgScore)} font-bold`}>
-                            {avgScore}
+                          <Badge className={`${getScoreBgColor(result.analysis.difficultyScore)} font-bold`}>
+                            {Math.round(result.analysis.difficultyScore)}
                           </Badge>
                         </TableCell>
                         <TableCell>{result.analysis.domainPower.drAvgTop10}</TableCell>
@@ -571,6 +575,11 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                           </span>
                         </TableCell>
                         <TableCell>
+                          <span className={getScoreColor(result.analysis.intent.score)}>
+                            {result.analysis.intent.score}
+                          </span>
+                        </TableCell>
+                        <TableCell>
                           <div className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs ${siteInfo.color}`}>
                             <SiteIcon className="h-3 w-3" />
                             <span>{siteInfo.label}</span>
@@ -578,11 +587,6 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-1">
-                            {result.analysis.intent.serpLocked && (
-                              <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">
-                                Locked
-                              </Badge>
-                            )}
                             {result.analysis.intent.local && (
                               <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
                                 Local
@@ -607,16 +611,28 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
           </div>
           <div className="flex flex-wrap gap-4 text-sm">
             <div className="flex items-center gap-1.5">
-              <Badge className="bg-green-100 text-green-800">≤40</Badge>
+              <Badge className="bg-green-100 text-green-800">0-15</Badge>
+              <span>Very Easy</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Badge className="bg-green-100 text-green-800">16-35</Badge>
               <span>Easy</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Badge className="bg-yellow-100 text-yellow-800">41-60</Badge>
+              <Badge className="bg-yellow-100 text-yellow-800">36-50</Badge>
               <span>Medium</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Badge className="bg-red-100 text-red-800">{'>'}60</Badge>
+              <Badge className="bg-yellow-100 text-yellow-800">51-65</Badge>
+              <span>Challenging</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Badge className="bg-red-100 text-red-800">66-80</Badge>
               <span>Hard</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Badge className="bg-red-100 text-red-800">81-100</Badge>
+              <span>Extreme</span>
             </div>
           </div>
         </div>
