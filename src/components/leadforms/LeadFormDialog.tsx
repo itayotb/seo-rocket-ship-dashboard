@@ -128,7 +128,7 @@ const LeadFormDialog: React.FC<LeadFormDialogProps> = ({
                     <SelectValue placeholder="Select template" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">None</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
                     {filteredTemplates.map((template) => (
                       <SelectItem key={template.id} value={template.id}>
                         {template.name}
