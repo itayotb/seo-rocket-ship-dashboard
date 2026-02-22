@@ -6,7 +6,7 @@
     "volume": 4000,
     "intentsRaw": "Informational,Commercial",
     "analysis": {
-      "domainPower": { "drAvgTop10": 45.0, "drMinTop10": 15.0, "drMaxTop10": 70.0, "score": 44.5 },
+      "domainPower": { "rankAvgTop10": 45.0, "rankMinTop10": 15.0, "rankMaxTop10": 70.0, "score": 44.5 },
       "backlinks": { "rdAvgDofollowTop10": 60.0, "rdMinDofollowTop10": 10.0, "refDomainsTrafficTotal": 800000, "score": 69.0 },
       "pagePower": { "pageRankAvgTop10": 35.0, "score": 35.0 },
       "difficultyScore": 59.1,
@@ -21,7 +21,7 @@
     "volume": 3100,
     "intentsRaw": "Informational,Commercial",
     "analysis": {
-      "domainPower": { "drAvgTop10": 43.0, "drMinTop10": 14.0, "drMaxTop10": 68.0, "score": 42.6 },
+      "domainPower": { "rankAvgTop10": 43.0, "rankMinTop10": 14.0, "rankMaxTop10": 68.0, "score": 42.6 },
       "backlinks": { "rdAvgDofollowTop10": 55.0, "rdMinDofollowTop10": 9.0, "refDomainsTrafficTotal": 730000, "score": 64.0 },
       "pagePower": { "pageRankAvgTop10": 33.0, "score": 33.0 },
       "difficultyScore": 56.7,
@@ -36,7 +36,7 @@
     "volume": 1200,
     "intentsRaw": "Informational,Commercial",
     "analysis": {
-      "domainPower": { "drAvgTop10": 41.0, "drMinTop10": 13.0, "drMaxTop10": 66.0, "score": 40.7 },
+      "domainPower": { "rankAvgTop10": 41.0, "rankMinTop10": 13.0, "rankMaxTop10": 66.0, "score": 40.7 },
       "backlinks": { "rdAvgDofollowTop10": 50.0, "rdMinDofollowTop10": 8.0, "refDomainsTrafficTotal": 660000, "score": 59.0 },
       "pagePower": { "pageRankAvgTop10": 31.0, "score": 31.0 },
       "difficultyScore": 54.2,
@@ -51,7 +51,7 @@
     "volume": 900,
     "intentsRaw": "Informational,Commercial",
     "analysis": {
-      "domainPower": { "drAvgTop10": 39.0, "drMinTop10": 12.0, "drMaxTop10": 64.0, "score": 38.8 },
+      "domainPower": { "rankAvgTop10": 39.0, "rankMinTop10": 12.0, "rankMaxTop10": 64.0, "score": 38.8 },
       "backlinks": { "rdAvgDofollowTop10": 45.0, "rdMinDofollowTop10": 7.0, "refDomainsTrafficTotal": 590000, "score": 54.1 },
       "pagePower": { "pageRankAvgTop10": 29.0, "score": 29.0 },
       "difficultyScore": 51.7,
@@ -66,7 +66,7 @@
     "volume": 500,
     "intentsRaw": "Informational,Commercial",
     "analysis": {
-      "domainPower": { "drAvgTop10": 37.0, "drMinTop10": 11.0, "drMaxTop10": 62.0, "score": 36.9 },
+      "domainPower": { "rankAvgTop10": 37.0, "rankMinTop10": 11.0, "rankMaxTop10": 62.0, "score": 36.9 },
       "backlinks": { "rdAvgDofollowTop10": 40.0, "rdMinDofollowTop10": 6.0, "refDomainsTrafficTotal": 520000, "score": 49.3 },
       "pagePower": { "pageRankAvgTop10": 27.0, "score": 27.0 },
       "difficultyScore": 49.2,
@@ -81,7 +81,7 @@
     "volume": 500,
     "intentsRaw": "Informational,Commercial",
     "analysis": {
-      "domainPower": { "drAvgTop10": 35.0, "drMinTop10": 10.0, "drMaxTop10": 60.0, "score": 35.0 },
+      "domainPower": { "rankAvgTop10": 35.0, "rankMinTop10": 10.0, "rankMaxTop10": 60.0, "score": 35.0 },
       "backlinks": { "rdAvgDofollowTop10": 35.0, "rdMinDofollowTop10": 5.0, "refDomainsTrafficTotal": 450000, "score": 44.4 },
       "pagePower": { "pageRankAvgTop10": 25.0, "score": 25.0 },
       "difficultyScore": 46.7,
@@ -96,7 +96,7 @@
     "volume": 350,
     "intentsRaw": "Informational,Commercial",
     "analysis": {
-      "domainPower": { "drAvgTop10": 33.0, "drMinTop10": 9.0, "drMaxTop10": 58.0, "score": 33.1 },
+      "domainPower": { "rankAvgTop10": 33.0, "rankMinTop10": 9.0, "rankMaxTop10": 58.0, "score": 33.1 },
       "backlinks": { "rdAvgDofollowTop10": 30.0, "rdMinDofollowTop10": 4.0, "refDomainsTrafficTotal": 380000, "score": 39.6 },
       "pagePower": { "pageRankAvgTop10": 23.0, "score": 23.0 },
       "difficultyScore": 44.2,
@@ -111,7 +111,7 @@
     "volume": 300,
     "intentsRaw": "Informational,Commercial",
     "analysis": {
-      "domainPower": { "drAvgTop10": 31.0, "drMinTop10": 8.0, "drMaxTop10": 56.0, "score": 31.2 },
+      "domainPower": { "rankAvgTop10": 31.0, "rankMinTop10": 8.0, "rankMaxTop10": 56.0, "score": 31.2 },
       "backlinks": { "rdAvgDofollowTop10": 25.0, "rdMinDofollowTop10": 3.0, "refDomainsTrafficTotal": 310000, "score": 34.7 },
       "pagePower": { "pageRankAvgTop10": 21.0, "score": 21.0 },
       "difficultyScore": 43.0,
@@ -126,7 +126,7 @@
     "volume": 250,
     "intentsRaw": "Informational,Commercial",
     "analysis": {
-      "domainPower": { "drAvgTop10": 29.0, "drMinTop10": 7.0, "drMaxTop10": 54.0, "score": 29.3 },
+      "domainPower": { "rankAvgTop10": 29.0, "rankMinTop10": 7.0, "rankMaxTop10": 54.0, "score": 29.3 },
       "backlinks": { "rdAvgDofollowTop10": 20.0, "rdMinDofollowTop10": 2.0, "refDomainsTrafficTotal": 240000, "score": 29.9 },
       "pagePower": { "pageRankAvgTop10": 19.0, "score": 19.0 },
       "difficultyScore": 40.8,
@@ -141,7 +141,7 @@
     "volume": 250,
     "intentsRaw": "Informational",
     "analysis": {
-      "domainPower": { "drAvgTop10": 27.0, "drMinTop10": 6.0, "drMaxTop10": 52.0, "score": 27.4 },
+      "domainPower": { "rankAvgTop10": 27.0, "rankMinTop10": 6.0, "rankMaxTop10": 52.0, "score": 27.4 },
       "backlinks": { "rdAvgDofollowTop10": 15.0, "rdMinDofollowTop10": 1.0, "refDomainsTrafficTotal": 170000, "score": 25.1 },
       "pagePower": { "pageRankAvgTop10": 17.0, "score": 17.0 },
       "difficultyScore": 33.7,

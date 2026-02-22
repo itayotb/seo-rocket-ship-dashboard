@@ -60,12 +60,12 @@ const columnTooltips: Record<string, { title: string; description: string }> = {
     description: 'Combined difficulty score (0-100) calculated from: Domain Power (33%) + Backlinks (33%) + Page Power (33%). Lower score = easier to rank.'
   },
   drAvg: {
-    title: 'DR Average (Top 10)',
-    description: 'Average Domain Rating of the top 10 ranking pages. DR measures overall domain authority on a 0-100 scale. Lower DR = weaker competition.'
+    title: 'Domain Rank Average (Top 10)',
+    description: 'Average Domain Rank of the top 10 ranking pages. DataForSEO rank measures overall domain authority on a 0-100 scale (rank_scale: one_hundred). Lower rank = weaker competition.'
   },
   drMin: {
-    title: 'DR Minimum (Top 10)',
-    description: 'Lowest Domain Rating among the top 10 results. Shows the weakest competitor currently ranking. If low, there\'s opportunity to compete.'
+    title: 'Domain Rank Minimum (Top 10)',
+    description: 'Lowest Domain Rank among the top 10 results. Shows the weakest competitor currently ranking. If low, there\'s opportunity to compete.'
   },
   rdAvg: {
     title: 'Referring Domains Avg',
@@ -77,7 +77,7 @@ const columnTooltips: Record<string, { title: string; description: string }> = {
   },
   domain: {
     title: 'Domain Score',
-    description: 'Difficulty score based on domain authority metrics (DR avg, min, max). Calculated from how strong the competing domains are. 0-100, lower = easier.'
+    description: 'Difficulty score based on domain rank metrics (rank avg, min, max). Calculated from how strong the competing domains are. 0-100, lower = easier.'
   },
   backlinks: {
     title: 'Backlinks Score',
@@ -85,7 +85,7 @@ const columnTooltips: Record<string, { title: string; description: string }> = {
   },
   page: {
     title: 'Page Score',
-    description: 'Difficulty score based on individual page strength (URL Rating). Indicates on-page optimization level of competitors. 0-100, lower = easier.'
+    description: 'Difficulty score based on individual page strength (page-level rank from DataForSEO). Indicates on-page optimization level of competitors. 0-100, lower = easier.'
   },
   siteType: {
     title: 'Recommended Site Type',
@@ -233,12 +233,12 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
           bVal = b.analysis.difficultyScore;
           break;
         case 'drAvg':
-          aVal = a.analysis.domainPower.drAvgTop10;
-          bVal = b.analysis.domainPower.drAvgTop10;
+          aVal = a.analysis.domainPower.rankAvgTop10;
+          bVal = b.analysis.domainPower.rankAvgTop10;
           break;
         case 'drMin':
-          aVal = a.analysis.domainPower.drMinTop10;
-          bVal = b.analysis.domainPower.drMinTop10;
+          aVal = a.analysis.domainPower.rankMinTop10;
+          bVal = b.analysis.domainPower.rankMinTop10;
           break;
         case 'rdAvg':
           aVal = a.analysis.backlinks.rdAvgDofollowTop10;
@@ -270,9 +270,9 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
       'Keyword',
       'Volume',
       'Score',
-      'DR Avg (Top 10)',
-      'DR Min (Top 10)',
-      'DR Max (Top 10)',
+      'Domain Rank Avg (Top 10)',
+      'Domain Rank Min (Top 10)',
+      'Domain Rank Max (Top 10)',
       'RD Avg (Top 10)',
       'RD Min (Top 10)',
       'Page Rank Avg (Top 10)',
@@ -289,9 +289,9 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
         r.keyword,
         r.volume,
         Math.round(r.analysis.difficultyScore),
-        r.analysis.domainPower.drAvgTop10,
-        r.analysis.domainPower.drMinTop10,
-        r.analysis.domainPower.drMaxTop10,
+        r.analysis.domainPower.rankAvgTop10,
+        r.analysis.domainPower.rankMinTop10,
+        r.analysis.domainPower.rankMaxTop10,
         r.analysis.backlinks.rdAvgDofollowTop10,
         r.analysis.backlinks.rdMinDofollowTop10,
         r.analysis.pagePower.pageRankAvgTop10,
@@ -489,8 +489,8 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                   <StaticHeader label="GEO" tooltipKey="geo" />
                   <SortHeader label="Volume" sortKeyValue="volume" tooltipKey="volume" />
                   <SortHeader label="Score" sortKeyValue="score" tooltipKey="score" />
-                  <SortHeader label="DR Avg" sortKeyValue="drAvg" tooltipKey="drAvg" />
-                  <SortHeader label="DR Min" sortKeyValue="drMin" tooltipKey="drMin" />
+                  <SortHeader label="Rank Avg" sortKeyValue="drAvg" tooltipKey="drAvg" />
+                  <SortHeader label="Rank Min" sortKeyValue="drMin" tooltipKey="drMin" />
                   <SortHeader label="RD Avg" sortKeyValue="rdAvg" tooltipKey="rdAvg" />
                   <SortHeader label="Page Rank" sortKeyValue="pageRank" tooltipKey="pageRank" />
                   <StaticHeader label="Domain" tooltipKey="domain" />
@@ -539,8 +539,8 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                             {Math.round(result.analysis.difficultyScore)}
                           </Badge>
                         </TableCell>
-                        <TableCell>{result.analysis.domainPower.drAvgTop10}</TableCell>
-                        <TableCell>{result.analysis.domainPower.drMinTop10}</TableCell>
+                        <TableCell>{result.analysis.domainPower.rankAvgTop10}</TableCell>
+                        <TableCell>{result.analysis.domainPower.rankMinTop10}</TableCell>
                         <TableCell>{result.analysis.backlinks.rdAvgDofollowTop10}</TableCell>
                         <TableCell>{result.analysis.pagePower.pageRankAvgTop10}</TableCell>
                         <TableCell>

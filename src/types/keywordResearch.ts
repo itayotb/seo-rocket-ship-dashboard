@@ -53,9 +53,9 @@ export const defaultFilters: FiltersState = {
 
 // Analysis Types
 export interface DomainPowerAnalysis {
-  drAvgTop10: number;
-  drMinTop10: number;
-  drMaxTop10: number;
+  rankAvgTop10: number;
+  rankMinTop10: number;
+  rankMaxTop10: number;
   score: number;
 }
 
