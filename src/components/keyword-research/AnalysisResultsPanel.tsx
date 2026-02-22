@@ -71,9 +71,9 @@ const columnTooltips: Record<string, { title: string; description: string }> = {
     title: 'Referring Domains Avg',
     description: 'Average number of unique dofollow referring domains (backlinks) to the top 10 pages. Fewer RDs = less link building required to compete.'
   },
-  urAvg: {
-    title: 'UR Average (Top 10)',
-    description: 'Average URL Rating of top 10 pages. UR measures individual page authority (0-100). Lower UR = easier to outrank with quality content.'
+  pageRank: {
+    title: 'Page Rank Avg (Top 10)',
+    description: 'Average page-level backlink rank from DataForSEO (backlinks/summary/live). Measures individual page authority. Lower = easier to outrank.'
   },
   domain: {
     title: 'Domain Score',
@@ -149,7 +149,7 @@ const getSiteTypeInfo = (type: string) => {
   }
 };
 
-type SortKey = 'keyword' | 'volume' | 'score' | 'drAvg' | 'drMin' | 'rdAvg' | 'urAvg' | 'siteType';
+type SortKey = 'keyword' | 'volume' | 'score' | 'drAvg' | 'drMin' | 'rdAvg' | 'pageRank' | 'siteType';
 type SortOrder = 'asc' | 'desc';
 type SiteTypeFilter = 'all' | 'small_site' | 'mini_site' | 'authority_blog';
 
@@ -244,9 +244,9 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
           aVal = a.analysis.backlinks.rdAvgDofollowTop10;
           bVal = b.analysis.backlinks.rdAvgDofollowTop10;
           break;
-        case 'urAvg':
-          aVal = a.analysis.pagePower.urAvgTop10;
-          bVal = b.analysis.pagePower.urAvgTop10;
+        case 'pageRank':
+          aVal = a.analysis.pagePower.pageRankAvgTop10;
+          bVal = b.analysis.pagePower.pageRankAvgTop10;
           break;
         case 'siteType':
           aVal = a.analysis.recommendedSiteType;
@@ -275,11 +275,10 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
       'DR Max (Top 10)',
       'RD Avg (Top 10)',
       'RD Min (Top 10)',
-      'UR Avg (Top 10)',
+      'Page Rank Avg (Top 10)',
       'Domain Score',
       'Backlinks Score',
       'Page Score',
-      'SERP Stability',
       'Difficulty Score',
       'Difficulty Label',
       'Site Type'
@@ -295,11 +294,10 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
         r.analysis.domainPower.drMaxTop10,
         r.analysis.backlinks.rdAvgDofollowTop10,
         r.analysis.backlinks.rdMinDofollowTop10,
-        r.analysis.pagePower.urAvgTop10,
+        r.analysis.pagePower.pageRankAvgTop10,
         r.analysis.domainPower.score,
         r.analysis.backlinks.score,
         r.analysis.pagePower.score,
-        r.analysis.serpStabilityScore,
         r.analysis.difficultyScore,
         r.analysis.difficultyLabel,
         getSiteTypeInfo(r.analysis.recommendedSiteType).label
@@ -494,7 +492,7 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                   <SortHeader label="DR Avg" sortKeyValue="drAvg" tooltipKey="drAvg" />
                   <SortHeader label="DR Min" sortKeyValue="drMin" tooltipKey="drMin" />
                   <SortHeader label="RD Avg" sortKeyValue="rdAvg" tooltipKey="rdAvg" />
-                  <SortHeader label="UR Avg" sortKeyValue="urAvg" tooltipKey="urAvg" />
+                  <SortHeader label="Page Rank" sortKeyValue="pageRank" tooltipKey="pageRank" />
                   <StaticHeader label="Domain" tooltipKey="domain" />
                   <StaticHeader label="Backlinks" tooltipKey="backlinks" />
                   <StaticHeader label="Page" tooltipKey="page" />
@@ -544,7 +542,7 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                         <TableCell>{result.analysis.domainPower.drAvgTop10}</TableCell>
                         <TableCell>{result.analysis.domainPower.drMinTop10}</TableCell>
                         <TableCell>{result.analysis.backlinks.rdAvgDofollowTop10}</TableCell>
-                        <TableCell>{result.analysis.pagePower.urAvgTop10}</TableCell>
+                        <TableCell>{result.analysis.pagePower.pageRankAvgTop10}</TableCell>
                         <TableCell>
                           <span className={getScoreColor(result.analysis.domainPower.score)}>
                             {result.analysis.domainPower.score}

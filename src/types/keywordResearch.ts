@@ -67,15 +67,19 @@ export interface BacklinksAnalysis {
 }
 
 export interface PagePowerAnalysis {
-  urAvgTop10: number;
+  /** DataForSEO: page-level `rank` from `backlinks/summary/live` */
+  pageRankAvgTop10: number;
   score: number;
 }
 
+/**
+ * Difficulty formula: Domain Power (33%) + Backlinks (33%) + Page Power (33%)
+ * Page Power uses DataForSEO's page-level `rank` from `backlinks/summary/live`
+ */
 export interface KeywordAnalysis {
   domainPower: DomainPowerAnalysis;
   backlinks: BacklinksAnalysis;
   pagePower: PagePowerAnalysis;
-  serpStabilityScore: number;
   difficultyScore: number;
   difficultyLabel: DifficultyLabel;
   recommendedSiteType: RecommendedSiteType;
