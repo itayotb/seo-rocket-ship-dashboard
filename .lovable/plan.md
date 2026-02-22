@@ -1,38 +1,64 @@
 
 
-# Create Updated Keyword Analysis Documentation
+# Fix All Parameters to Match DataForSEO Terminology
 
-## Overview
-Create a new markdown document (`public/docs/keyword-analysis-methodology.md`) that replaces the old PDF and accurately describes how the system works with the DataForSEO API.
+## Problem
+The codebase uses Ahrefs terminology ("DR" = Domain Rating, "URL Rating") instead of DataForSEO's actual field names. DataForSEO uses `rank` with a configurable scale (0-100 or 0-1000).
 
-## Key Differences from Old PDF
+## Decision: Use `rank_scale: "one_hundred"` (0-100)
+We will send `rank_scale: "one_hundred"` in API calls so all rank values come back on a 0-100 scale. This keeps formulas simple and avoids normalization.
 
-| Aspect | Old (Rapid API) | New (DataForSEO) |
+## Changes Required
+
+### 1. Rename Field Names in Types (`src/types/keywordResearch.ts`)
+
+| Old (Ahrefs terms) | New (DataForSEO terms) | API Field |
 |---|---|---|
-| Categories | 5 (Domain, Backlinks, Page, Intent, SERP Stability) | 3 (Domain, Backlinks, Page) |
-| Weights | 25% + 25% + 20% + 20% + 10% | 33% + 33% + 33% |
-| Page Power metric | `urAvgTop10` (URL Rating) | `pageRankAvgTop10` (page-level `rank` from `backlinks/summary/live`) |
-| SERP Stability | Included (10%) | Removed (no DataForSEO source) |
-| Intent Score | Included (20%) | Removed from difficulty formula (intent is still displayed but not scored) |
-| Competition field | Not present | Added (DataForSEO float 0-1, mapped to LOW/MEDIUM/HIGH) |
-| CPC field | Not present | Added from `keyword_suggestions/live` |
-| KD field | Not present | Added from `bulk_keyword_difficulty/live` |
+| `drAvgTop10` | `rankAvgTop10` | `rank` (domain-level) |
+| `drMinTop10` | `rankMinTop10` | `rank` (domain-level) |
+| `drMaxTop10` | `rankMaxTop10` | `rank` (domain-level) |
+| `pageRankAvgTop10` | `pageRankAvgTop10` | `rank` (page-level) |
 
-## Document Content Structure
+The `pageRankAvgTop10` name is already correct (DataForSEO calls it `rank` at page level too).
 
-1. **Keyword Base Data** - id, keyword, country, volume, difficulty (KD), cpc, competition, intents
-2. **Analysis Category 1: Domain Power** - same formula as before (DR avg/min/max)
-3. **Analysis Category 2: Backlinks Power** - same formula (RD avg/min, traffic)
-4. **Analysis Category 3: Page Power** - updated to use DataForSEO `pageRankAvgTop10`
-5. **Final Difficulty Score** - updated to 33/33/33 weights
-6. **Difficulty Labels** - same 6-scale model
-7. **Recommended Site Type** - same logic
-8. **DataForSEO API Endpoints Reference** - which endpoint provides each field
+### 2. Update UI Labels (`src/components/keyword-research/AnalysisResultsPanel.tsx`)
 
-## File to Create
-- `public/docs/keyword-analysis-methodology.md` - Full methodology document
+- "DR Avg" -> "Rank Avg" (or "Domain Rank Avg")
+- "DR Min" -> "Rank Min"
+- Tooltip descriptions: remove "Domain Rating" references, use "Domain Rank (DataForSEO)"
+- "URL Rating" -> "Page Rank (DataForSEO)"
+- CSV headers: "DR Avg (Top 10)" -> "Domain Rank Avg (Top 10)", etc.
 
-## Technical Notes
-- The document will be a Markdown file stored in the project for easy reference
-- All formulas will match exactly what the code implements
-- DataForSEO endpoint names will be included for developer reference
+### 3. Update Demo Data (`public/data/car_loans_ca_analyzed.json`)
+
+Rename all `drAvgTop10`, `drMinTop10`, `drMaxTop10` fields to `rankAvgTop10`, `rankMinTop10`, `rankMaxTop10`.
+
+### 4. Update Methodology Document (`public/docs/keyword-analysis-methodology.md`)
+
+- Replace all "DR" / "Domain Rating" references with "Domain Rank"
+- Add note about `rank_scale: "one_hundred"` parameter
+- Clarify that `rank` is DataForSEO's native metric (not Ahrefs DR)
+- Page Power: clarify it uses page-level `rank` (not "URL Rating")
+
+### 5. Update Hook (`src/hooks/useKeywordResearch.tsx`)
+
+No structural changes needed (uses type interfaces), but will automatically reflect type changes.
+
+## Files to Modify
+
+1. `src/types/keywordResearch.ts` - Rename `dr*` fields to `rank*`
+2. `src/components/keyword-research/AnalysisResultsPanel.tsx` - Update labels, tooltips, CSV headers
+3. `public/data/car_loans_ca_analyzed.json` - Rename fields in demo data
+4. `public/docs/keyword-analysis-methodology.md` - Fix terminology throughout
+
+## Summary of DataForSEO Field Mapping
+
+| Our Field | DataForSEO Endpoint | DataForSEO Field | Scale |
+|---|---|---|---|
+| `rankAvgTop10` | `backlinks/summary/live` (domain target) | `rank` | 0-100 (with `rank_scale: "one_hundred"`) |
+| `rankMinTop10` | Same | `rank` | 0-100 |
+| `rankMaxTop10` | Same | `rank` | 0-100 |
+| `pageRankAvgTop10` | `backlinks/summary/live` (page target) | `rank` | 0-100 |
+| `rdAvgDofollowTop10` | `backlinks/summary/live` | `referring_domains - referring_domains_nofollow` | count |
+| `refDomainsTrafficTotal` | `backlinks/referring_domains/live` | `organic_traffic` (aggregated) | count |
+
