@@ -217,12 +217,6 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
                             {intent.slice(0, 4)}
                           </Badge>
                         ))}
-                        <Badge variant="outline" className="text-xs">
-                          {row.brandType === 'Branded' ? 'B' : 'NB'}
-                        </Badge>
-                        <Badge variant="outline" className="text-xs">
-                          {row.locationType === 'Local' ? 'L' : 'NL'}
-                        </Badge>
                       </div>
                     </TableCell>
                   </TableRow>

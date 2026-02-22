@@ -1,7 +1,5 @@
 
 export type IntentType = "Informational" | "Commercial" | "Transactional" | "Navigational" | "Mixed";
-export type BrandType = "Branded" | "Non-branded";
-export type LocationType = "Local" | "Non-local";
 export type DifficultyLabel = "very_easy" | "easy" | "medium" | "challenging" | "hard" | "extreme";
 export type RecommendedSiteType = "small_site" | "mini_site" | "authority_blog";
 export type CompetitionLevel = "LOW" | "MEDIUM" | "HIGH";
@@ -16,8 +14,6 @@ export interface KeywordRow {
   competition: CompetitionLevel;
   intentsRaw: string;
   intentTypes: IntentType[];
-  brandType: BrandType;
-  locationType: LocationType;
 }
 
 export interface RawKeywordData {
@@ -39,8 +35,6 @@ export interface FiltersState {
   maxCpc: number;
   competition: "all" | CompetitionLevel;
   intentTypes: IntentType[];
-  branding: "all" | "Branded" | "Non-branded";
-  location: "all" | "Local" | "Non-local";
   includeTerms: string[];
   includeMode: "all" | "any";
 }
@@ -53,8 +47,6 @@ export const defaultFilters: FiltersState = {
   maxCpc: 999,
   competition: "all",
   intentTypes: [],
-  branding: "all",
-  location: "all",
   includeTerms: [],
   includeMode: "any",
 };

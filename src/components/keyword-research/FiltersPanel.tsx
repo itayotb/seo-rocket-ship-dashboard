@@ -192,55 +192,6 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({ onApplyFilters }) => {
           </div>
         </div>
 
-        {/* Branding Filter */}
-        <div className="space-y-3">
-          <Label>Branding</Label>
-          <RadioGroup
-            value={localFilters.branding}
-            onValueChange={(value) => setLocalFilters(prev => ({
-              ...prev,
-              branding: value as FiltersState['branding'],
-            }))}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="all" id="brand-all" />
-              <Label htmlFor="brand-all" className="text-sm font-normal cursor-pointer">All keywords</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Branded" id="brand-branded" />
-              <Label htmlFor="brand-branded" className="text-sm font-normal cursor-pointer">Branded only</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Non-branded" id="brand-nonbranded" />
-              <Label htmlFor="brand-nonbranded" className="text-sm font-normal cursor-pointer">Non-branded only</Label>
-            </div>
-          </RadioGroup>
-        </div>
-
-        {/* Location Filter */}
-        <div className="space-y-3">
-          <Label>Location</Label>
-          <RadioGroup
-            value={localFilters.location}
-            onValueChange={(value) => setLocalFilters(prev => ({
-              ...prev,
-              location: value as FiltersState['location'],
-            }))}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="all" id="loc-all" />
-              <Label htmlFor="loc-all" className="text-sm font-normal cursor-pointer">All keywords</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Local" id="loc-local" />
-              <Label htmlFor="loc-local" className="text-sm font-normal cursor-pointer">Local only</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Non-local" id="loc-nonlocal" />
-              <Label htmlFor="loc-nonlocal" className="text-sm font-normal cursor-pointer">Non-local only</Label>
-            </div>
-          </RadioGroup>
-        </div>
 
         {/* Include Filter */}
         <div className="space-y-3">

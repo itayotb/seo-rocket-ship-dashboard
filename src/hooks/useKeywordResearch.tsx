@@ -6,45 +6,21 @@ import {
   FiltersState, 
   defaultFilters,
   IntentType,
-  BrandType,
-  LocationType,
   AnalyzedKeyword
 } from '@/types/keywordResearch';
 
-const parseIntentsRaw = (intentsRaw: string): { 
-  intentTypes: IntentType[]; 
-  brandType: BrandType; 
-  locationType: LocationType;
-} => {
+const parseIntentsRaw = (intentsRaw: string): IntentType[] => {
   const parts = intentsRaw.split(',').map(p => p.trim());
-  
-  const intentTypes: IntentType[] = [];
-  let brandType: BrandType = 'Non-branded';
-  let locationType: LocationType = 'Non-local';
-
-  parts.forEach(part => {
-    if (['Informational', 'Commercial', 'Transactional', 'Navigational'].includes(part)) {
-      intentTypes.push(part as IntentType);
-    } else if (part === 'Branded' || part === 'Non-branded') {
-      brandType = part as BrandType;
-    } else if (part === 'Local' || part === 'Non-local') {
-      locationType = part as LocationType;
-    }
-  });
-
-  return { intentTypes, brandType, locationType };
+  return parts.filter(part =>
+    ['Informational', 'Commercial', 'Transactional', 'Navigational'].includes(part)
+  ) as IntentType[];
 };
 
 const parseRawData = (rawData: RawKeywordData[]): KeywordRow[] => {
-  return rawData.map(row => {
-    const { intentTypes, brandType, locationType } = parseIntentsRaw(row.intentsRaw);
-    return {
-      ...row,
-      intentTypes,
-      brandType,
-      locationType,
-    };
-  });
+  return rawData.map(row => ({
+    ...row,
+    intentTypes: parseIntentsRaw(row.intentsRaw),
+  }));
 };
 
 export const useKeywordResearch = () => {
@@ -121,19 +97,6 @@ export const useKeywordResearch = () => {
       );
     }
 
-    // Branding filter
-    if (newFilters.branding === "Branded") {
-      rows = rows.filter(r => r.brandType === "Branded");
-    } else if (newFilters.branding === "Non-branded") {
-      rows = rows.filter(r => r.brandType === "Non-branded");
-    }
-
-    // Location filter
-    if (newFilters.location === "Local") {
-      rows = rows.filter(r => r.locationType === "Local");
-    } else if (newFilters.location === "Non-local") {
-      rows = rows.filter(r => r.locationType === "Non-local");
-    }
 
     // Include terms filter
     if (newFilters.includeTerms.length > 0) {
