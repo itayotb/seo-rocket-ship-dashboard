@@ -1,64 +1,45 @@
 
 
-# Fix All Parameters to Match DataForSEO Terminology
+# Create a Printable PDF Page for the Methodology Document
 
-## Problem
-The codebase uses Ahrefs terminology ("DR" = Domain Rating, "URL Rating") instead of DataForSEO's actual field names. DataForSEO uses `rank` with a configurable scale (0-100 or 0-1000).
+## What We'll Build
+A new route `/methodology` in the app that renders the keyword analysis methodology as a professionally styled, print-ready HTML page. The page will include a "Print / Save as PDF" button so you can easily export it.
 
-## Decision: Use `rank_scale: "one_hundred"` (0-100)
-We will send `rank_scale: "one_hundred"` in API calls so all rank values come back on a 0-100 scale. This keeps formulas simple and avoids normalization.
+## Implementation Details
 
-## Changes Required
+### New Files
 
-### 1. Rename Field Names in Types (`src/types/keywordResearch.ts`)
+1. **`src/pages/Methodology.tsx`** - A dedicated page component that renders the full methodology content as styled HTML (not raw markdown). Includes:
+   - Professional typography with clear headings hierarchy
+   - Styled tables with borders and alternating row colors
+   - Code blocks with background highlighting
+   - A "Print as PDF" button at the top
+   - Print-optimized CSS (`@media print`) that hides the button and navigation, and ensures clean page breaks
 
-| Old (Ahrefs terms) | New (DataForSEO terms) | API Field |
-|---|---|---|
-| `drAvgTop10` | `rankAvgTop10` | `rank` (domain-level) |
-| `drMinTop10` | `rankMinTop10` | `rank` (domain-level) |
-| `drMaxTop10` | `rankMaxTop10` | `rank` (domain-level) |
-| `pageRankAvgTop10` | `pageRankAvgTop10` | `rank` (page-level) |
+2. **Route in `src/App.tsx`** - Add `/methodology` route pointing to the new page
 
-The `pageRankAvgTop10` name is already correct (DataForSEO calls it `rank` at page level too).
+### Design
+- Clean white background with readable fonts
+- Tables styled with borders and padding
+- Code formulas in monospace blocks with gray background
+- Numbered sections with clear visual hierarchy
+- Print styles that produce a clean A4-friendly PDF
+- No app navigation/sidebar - standalone document feel
 
-### 2. Update UI Labels (`src/components/keyword-research/AnalysisResultsPanel.tsx`)
+### Content Sections (from the current document)
+1. DataForSEO Terminology note
+2. Keyword Base Data table
+3. Competition Mapping
+4. Analysis Categories (Domain Power, Backlinks Power, Page Power) with formulas
+5. Final Difficulty Score formula
+6. Difficulty Labels table
+7. Recommended Site Type table
+8. API Endpoints Reference table
+9. Data Flow diagram
 
-- "DR Avg" -> "Rank Avg" (or "Domain Rank Avg")
-- "DR Min" -> "Rank Min"
-- Tooltip descriptions: remove "Domain Rating" references, use "Domain Rank (DataForSEO)"
-- "URL Rating" -> "Page Rank (DataForSEO)"
-- CSV headers: "DR Avg (Top 10)" -> "Domain Rank Avg (Top 10)", etc.
-
-### 3. Update Demo Data (`public/data/car_loans_ca_analyzed.json`)
-
-Rename all `drAvgTop10`, `drMinTop10`, `drMaxTop10` fields to `rankAvgTop10`, `rankMinTop10`, `rankMaxTop10`.
-
-### 4. Update Methodology Document (`public/docs/keyword-analysis-methodology.md`)
-
-- Replace all "DR" / "Domain Rating" references with "Domain Rank"
-- Add note about `rank_scale: "one_hundred"` parameter
-- Clarify that `rank` is DataForSEO's native metric (not Ahrefs DR)
-- Page Power: clarify it uses page-level `rank` (not "URL Rating")
-
-### 5. Update Hook (`src/hooks/useKeywordResearch.tsx`)
-
-No structural changes needed (uses type interfaces), but will automatically reflect type changes.
-
-## Files to Modify
-
-1. `src/types/keywordResearch.ts` - Rename `dr*` fields to `rank*`
-2. `src/components/keyword-research/AnalysisResultsPanel.tsx` - Update labels, tooltips, CSV headers
-3. `public/data/car_loans_ca_analyzed.json` - Rename fields in demo data
-4. `public/docs/keyword-analysis-methodology.md` - Fix terminology throughout
-
-## Summary of DataForSEO Field Mapping
-
-| Our Field | DataForSEO Endpoint | DataForSEO Field | Scale |
-|---|---|---|---|
-| `rankAvgTop10` | `backlinks/summary/live` (domain target) | `rank` | 0-100 (with `rank_scale: "one_hundred"`) |
-| `rankMinTop10` | Same | `rank` | 0-100 |
-| `rankMaxTop10` | Same | `rank` | 0-100 |
-| `pageRankAvgTop10` | `backlinks/summary/live` (page target) | `rank` | 0-100 |
-| `rdAvgDofollowTop10` | `backlinks/summary/live` | `referring_domains - referring_domains_nofollow` | count |
-| `refDomainsTrafficTotal` | `backlinks/referring_domains/live` | `organic_traffic` (aggregated) | count |
+### How to Use
+1. Navigate to `/methodology` in the app
+2. Click "Print / Save as PDF" button
+3. In the print dialog, select "Save as PDF" as the destination
+4. Save the file
 
