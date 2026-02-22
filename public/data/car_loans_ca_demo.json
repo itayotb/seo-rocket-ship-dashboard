@@ -5,6 +5,8 @@
     "country": "ca",
     "difficulty": 37,
     "volume": 4000,
+    "cpc": 2.45,
+    "competition": "MEDIUM",
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
   },
   {
@@ -13,6 +15,8 @@
     "country": "ca",
     "difficulty": 41,
     "volume": 3100,
+    "cpc": 3.12,
+    "competition": "HIGH",
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
   },
   {
@@ -21,6 +25,8 @@
     "country": "ca",
     "difficulty": 0,
     "volume": 1200,
+    "cpc": 4.87,
+    "competition": "HIGH",
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
   },
   {
@@ -29,6 +35,8 @@
     "country": "ca",
     "difficulty": 50,
     "volume": 900,
+    "cpc": 2.98,
+    "competition": "MEDIUM",
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
   },
   {
@@ -37,6 +45,8 @@
     "country": "ca",
     "difficulty": 0,
     "volume": 500,
+    "cpc": 1.23,
+    "competition": "LOW",
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
   },
   {
@@ -45,6 +55,8 @@
     "country": "ca",
     "difficulty": 0,
     "volume": 500,
+    "cpc": 5.10,
+    "competition": "HIGH",
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
   },
   {
@@ -53,6 +65,8 @@
     "country": "ca",
     "difficulty": 0,
     "volume": 350,
+    "cpc": 3.45,
+    "competition": "MEDIUM",
     "intentsRaw": "Informational,Commercial,Non-branded,Non-local"
   },
   {
@@ -61,6 +75,8 @@
     "country": "ca",
     "difficulty": 0,
     "volume": 300,
+    "cpc": 4.21,
+    "competition": "MEDIUM",
     "intentsRaw": "Informational,Commercial,Non-branded,Local"
   },
   {
@@ -69,6 +85,8 @@
     "country": "ca",
     "difficulty": 0,
     "volume": 250,
+    "cpc": 3.78,
+    "competition": "MEDIUM",
     "intentsRaw": "Informational,Commercial,Non-branded,Local"
   },
   {
@@ -77,6 +95,8 @@
     "country": "ca",
     "difficulty": 0,
     "volume": 250,
+    "cpc": 3.55,
+    "competition": "MEDIUM",
     "intentsRaw": "Informational,Non-branded,Non-local"
   }
 ]

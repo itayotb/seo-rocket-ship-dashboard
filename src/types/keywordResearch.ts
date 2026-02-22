@@ -4,6 +4,7 @@ export type BrandType = "Branded" | "Non-branded";
 export type LocationType = "Local" | "Non-local";
 export type DifficultyLabel = "very_easy" | "easy" | "medium" | "challenging" | "hard" | "extreme";
 export type RecommendedSiteType = "small_site" | "mini_site" | "authority_blog";
+export type CompetitionLevel = "LOW" | "MEDIUM" | "HIGH";
 
 export interface KeywordRow {
   id: number;
@@ -11,6 +12,8 @@ export interface KeywordRow {
   country: string;
   volume: number;
   difficulty: number;
+  cpc: number;
+  competition: CompetitionLevel;
   intentsRaw: string;
   intentTypes: IntentType[];
   brandType: BrandType;
@@ -23,11 +26,18 @@ export interface RawKeywordData {
   country: string;
   difficulty: number;
   volume: number;
+  cpc: number;
+  competition: CompetitionLevel;
   intentsRaw: string;
 }
 
 export interface FiltersState {
   minVolume: number;
+  minDifficulty: number;
+  maxDifficulty: number;
+  minCpc: number;
+  maxCpc: number;
+  competition: "all" | CompetitionLevel;
   intentTypes: IntentType[];
   branding: "all" | "Branded" | "Non-branded";
   location: "all" | "Local" | "Non-local";
@@ -37,6 +47,11 @@ export interface FiltersState {
 
 export const defaultFilters: FiltersState = {
   minVolume: 0,
+  minDifficulty: 0,
+  maxDifficulty: 100,
+  minCpc: 0,
+  maxCpc: 999,
+  competition: "all",
   intentTypes: [],
   branding: "all",
   location: "all",

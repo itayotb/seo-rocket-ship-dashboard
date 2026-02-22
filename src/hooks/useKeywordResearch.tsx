@@ -57,6 +57,9 @@ export const useKeywordResearch = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResults, setAnalysisResults] = useState<AnalyzedKeyword[]>([]);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchCountry, setSearchCountry] = useState('ca');
+  const [searchLanguage, setSearchLanguage] = useState('en');
 
   const loadDemoData = useCallback(async () => {
     setIsLoading(true);
@@ -77,6 +80,15 @@ export const useKeywordResearch = () => {
     }
   }, []);
 
+  // Placeholder for real API search - will call edge function when Cloud is enabled
+  const searchKeywords = useCallback(async (keyword: string, country: string, language: string) => {
+    setSearchKeyword(keyword);
+    setSearchCountry(country);
+    setSearchLanguage(language);
+    // For now, fall back to demo data
+    await loadDemoData();
+  }, [loadDemoData]);
+
   const applyFilters = useCallback((newFilters: FiltersState) => {
     setFilters(newFilters);
     
@@ -85,6 +97,21 @@ export const useKeywordResearch = () => {
     // Volume filter
     if (newFilters.minVolume > 0) {
       rows = rows.filter(r => r.volume >= newFilters.minVolume);
+    }
+
+    // Difficulty filter
+    if (newFilters.minDifficulty > 0 || newFilters.maxDifficulty < 100) {
+      rows = rows.filter(r => r.difficulty >= newFilters.minDifficulty && r.difficulty <= newFilters.maxDifficulty);
+    }
+
+    // CPC filter
+    if (newFilters.minCpc > 0 || newFilters.maxCpc < 999) {
+      rows = rows.filter(r => r.cpc >= newFilters.minCpc && r.cpc <= newFilters.maxCpc);
+    }
+
+    // Competition filter
+    if (newFilters.competition !== "all") {
+      rows = rows.filter(r => r.competition === newFilters.competition);
     }
 
     // Intent filter
@@ -121,7 +148,6 @@ export const useKeywordResearch = () => {
     }
 
     setFilteredKeywords(rows);
-    // Clear selections that are no longer in filtered results
     setSelectedIds(prev => prev.filter(id => rows.some(r => r.id === id)));
   }, [allKeywords]);
 
@@ -179,7 +205,14 @@ export const useKeywordResearch = () => {
     isAnalyzing,
     analysisResults,
     showAnalysis,
+    searchKeyword,
+    searchCountry,
+    searchLanguage,
     loadDemoData,
+    searchKeywords,
+    setSearchKeyword,
+    setSearchCountry,
+    setSearchLanguage,
     applyFilters,
     toggleSelection,
     selectAll,

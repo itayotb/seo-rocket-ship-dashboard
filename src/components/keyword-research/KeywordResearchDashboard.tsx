@@ -35,7 +35,14 @@ const KeywordResearchDashboard: React.FC<KeywordResearchDashboardProps> = ({
     isAnalyzing,
     analysisResults,
     showAnalysis,
+    searchKeyword,
+    searchCountry,
+    searchLanguage,
     loadDemoData,
+    searchKeywords,
+    setSearchKeyword,
+    setSearchCountry,
+    setSearchLanguage,
     applyFilters,
     toggleSelection,
     selectAll,
@@ -44,7 +51,6 @@ const KeywordResearchDashboard: React.FC<KeywordResearchDashboardProps> = ({
     closeAnalysis,
   } = useKeywordResearch();
 
-  // Switch to analysis tab when results are ready
   useEffect(() => {
     if (showAnalysis && analysisResults.length > 0) {
       setActiveTab('analysis');
@@ -57,7 +63,6 @@ const KeywordResearchDashboard: React.FC<KeywordResearchDashboardProps> = ({
   };
 
   const handleCreateBulkWebsites = (keywords: SelectedKeywordForBulk[]) => {
-    // Convert selected keywords to BulkKeywordEntry format
     const bulkKeywords: BulkKeywordEntry[] = keywords.map((kw, index) => ({
       id: `kw-${Date.now()}-${index}`,
       keyword: kw.keyword,
@@ -90,14 +95,22 @@ const KeywordResearchDashboard: React.FC<KeywordResearchDashboardProps> = ({
       <Alert>
         <Info className="h-4 w-4" />
         <AlertDescription>
-          This is a demo interface. Click "Load Demo" to load sample keyword data for "car loans" in Canada.
+          Enter a keyword and select country/language to search, or click "Load Demo" for sample data. 
+          API integration requires Cloud to be enabled.
         </AlertDescription>
       </Alert>
 
       <SearchHeader 
         onLoadDemo={loadDemoData}
+        onSearch={searchKeywords}
         isLoading={isLoading}
         isLoaded={isLoaded}
+        searchKeyword={searchKeyword}
+        searchCountry={searchCountry}
+        searchLanguage={searchLanguage}
+        onSearchKeywordChange={setSearchKeyword}
+        onSearchCountryChange={setSearchCountry}
+        onSearchLanguageChange={setSearchLanguage}
       />
 
       {isLoaded && (
@@ -148,7 +161,7 @@ const KeywordResearchDashboard: React.FC<KeywordResearchDashboardProps> = ({
 
       {!isLoaded && !isLoading && (
         <div className="text-center py-12 text-muted-foreground">
-          <p>Click "Load Demo" to get started with sample keyword data.</p>
+          <p>Enter a keyword to search or click "Load Demo" to get started.</p>
         </div>
       )}
 

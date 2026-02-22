@@ -22,8 +22,10 @@ interface KeywordsTableProps {
   onClearSelection: () => void;
 }
 
-type SortField = 'keyword' | 'volume' | 'difficulty';
+type SortField = 'keyword' | 'volume' | 'difficulty' | 'cpc' | 'competition';
 type SortDirection = 'asc' | 'desc';
+
+const competitionOrder = { LOW: 0, MEDIUM: 1, HIGH: 2 };
 
 const KeywordsTable: React.FC<KeywordsTableProps> = ({
   rows,
@@ -43,7 +45,10 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
       if (sortField === 'keyword') {
         return multiplier * a.keyword.localeCompare(b.keyword);
       }
-      return multiplier * (a[sortField] - b[sortField]);
+      if (sortField === 'competition') {
+        return multiplier * (competitionOrder[a.competition] - competitionOrder[b.competition]);
+      }
+      return multiplier * ((a[sortField] as number) - (b[sortField] as number));
     });
   }, [rows, sortField, sortDirection]);
 
@@ -84,120 +89,150 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
   };
 
   const getDifficultyColor = (difficulty: number) => {
-    if (difficulty === 0) return 'text-gray-400';
+    if (difficulty === 0) return 'text-muted-foreground';
     if (difficulty < 30) return 'text-green-600 dark:text-green-400';
     if (difficulty < 50) return 'text-yellow-600 dark:text-yellow-400';
     if (difficulty < 70) return 'text-orange-600 dark:text-orange-400';
     return 'text-red-600 dark:text-red-400';
   };
 
+  const getCompetitionColor = (comp: string) => {
+    switch (comp) {
+      case 'LOW': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'MEDIUM': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+      case 'HIGH': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+      default: return '';
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="border rounded-lg overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12">
-                <Checkbox
-                  checked={allSelected}
-                  ref={(el) => {
-                    if (el) (el as any).indeterminate = someSelected;
-                  }}
-                  onCheckedChange={() => allSelected ? onClearSelection() : onSelectAll()}
-                />
-              </TableHead>
-              <TableHead>
-                <button 
-                  className="flex items-center hover:text-foreground transition-colors"
-                  onClick={() => handleSort('keyword')}
-                >
-                  Keyword
-                  <SortIcon field="keyword" />
-                </button>
-              </TableHead>
-              <TableHead className="w-24">Country</TableHead>
-              <TableHead className="w-28">
-                <button 
-                  className="flex items-center hover:text-foreground transition-colors"
-                  onClick={() => handleSort('volume')}
-                >
-                  Volume
-                  <SortIcon field="volume" />
-                </button>
-              </TableHead>
-              <TableHead className="w-28">
-                <button 
-                  className="flex items-center hover:text-foreground transition-colors"
-                  onClick={() => handleSort('difficulty')}
-                >
-                  Difficulty
-                  <SortIcon field="difficulty" />
-                </button>
-              </TableHead>
-              <TableHead>Intents</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedRows.length === 0 ? (
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                  No keywords found. Try adjusting your filters or load the demo data.
-                </TableCell>
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={allSelected}
+                    ref={(el) => {
+                      if (el) (el as any).indeterminate = someSelected;
+                    }}
+                    onCheckedChange={() => allSelected ? onClearSelection() : onSelectAll()}
+                  />
+                </TableHead>
+                <TableHead>
+                  <button 
+                    className="flex items-center hover:text-foreground transition-colors"
+                    onClick={() => handleSort('keyword')}
+                  >
+                    Keyword
+                    <SortIcon field="keyword" />
+                  </button>
+                </TableHead>
+                <TableHead className="w-24">Country</TableHead>
+                <TableHead className="w-28">
+                  <button 
+                    className="flex items-center hover:text-foreground transition-colors"
+                    onClick={() => handleSort('volume')}
+                  >
+                    Volume
+                    <SortIcon field="volume" />
+                  </button>
+                </TableHead>
+                <TableHead className="w-20">
+                  <button 
+                    className="flex items-center hover:text-foreground transition-colors"
+                    onClick={() => handleSort('difficulty')}
+                  >
+                    KD
+                    <SortIcon field="difficulty" />
+                  </button>
+                </TableHead>
+                <TableHead className="w-20">
+                  <button 
+                    className="flex items-center hover:text-foreground transition-colors"
+                    onClick={() => handleSort('cpc')}
+                  >
+                    CPC
+                    <SortIcon field="cpc" />
+                  </button>
+                </TableHead>
+                <TableHead className="w-28">
+                  <button 
+                    className="flex items-center hover:text-foreground transition-colors"
+                    onClick={() => handleSort('competition')}
+                  >
+                    Comp.
+                    <SortIcon field="competition" />
+                  </button>
+                </TableHead>
+                <TableHead>Intents</TableHead>
               </TableRow>
-            ) : (
-              paginatedRows.map(row => (
-                <TableRow key={row.id} className={selectedIds.includes(row.id) ? 'bg-muted/50' : ''}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedIds.includes(row.id)}
-                      onCheckedChange={() => onToggleSelect(row.id)}
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">{row.keyword}</TableCell>
-                  <TableCell>
-                    <span className="text-sm text-muted-foreground uppercase">{row.country}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-semibold">{row.volume.toLocaleString()}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className={`font-semibold ${getDifficultyColor(row.difficulty)}`}>
-                      {row.difficulty || '-'}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {row.intentTypes.map(intent => (
-                        <Badge 
-                          key={intent} 
-                          variant="secondary"
-                          className={`text-xs ${getIntentColor(intent)}`}
-                        >
-                          {intent.slice(0, 4)}
-                        </Badge>
-                      ))}
-                      <Badge 
-                        variant="outline"
-                        className="text-xs"
-                      >
-                        {row.brandType === 'Branded' ? 'B' : 'NB'}
-                      </Badge>
-                      <Badge 
-                        variant="outline"
-                        className="text-xs"
-                      >
-                        {row.locationType === 'Local' ? 'L' : 'NL'}
-                      </Badge>
-                    </div>
+            </TableHeader>
+            <TableBody>
+              {paginatedRows.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                    No keywords found. Try adjusting your filters or load the demo data.
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                paginatedRows.map(row => (
+                  <TableRow key={row.id} className={selectedIds.includes(row.id) ? 'bg-muted/50' : ''}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedIds.includes(row.id)}
+                        onCheckedChange={() => onToggleSelect(row.id)}
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium">{row.keyword}</TableCell>
+                    <TableCell>
+                      <span className="text-sm text-muted-foreground uppercase">{row.country}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-semibold">{row.volume.toLocaleString()}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className={`font-semibold ${getDifficultyColor(row.difficulty)}`}>
+                        {row.difficulty || '-'}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">${row.cpc.toFixed(2)}</span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className={`text-xs ${getCompetitionColor(row.competition)}`}>
+                        {row.competition}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {row.intentTypes.map(intent => (
+                          <Badge 
+                            key={intent} 
+                            variant="secondary"
+                            className={`text-xs ${getIntentColor(intent)}`}
+                          >
+                            {intent.slice(0, 4)}
+                          </Badge>
+                        ))}
+                        <Badge variant="outline" className="text-xs">
+                          {row.brandType === 'Branded' ? 'B' : 'NB'}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs">
+                          {row.locationType === 'Local' ? 'L' : 'NL'}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
