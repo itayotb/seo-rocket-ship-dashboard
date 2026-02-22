@@ -137,7 +137,7 @@ const Methodology = () => {
           <span className="bg-green-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">2</span>
           Backlinks Power
         </h3>
-        <p className="mb-3 text-sm"><strong>What it measures:</strong> How many strong backlinks are required to rank. Strong RD profiles → harder.</p>
+        <p className="mb-3 text-sm"><strong>What it measures:</strong> How many strong backlinks are required to rank. Strong backlink profiles → harder.</p>
         <p className="mb-2 text-sm font-semibold font-sans">Inputs:</p>
         <table className="w-full border-collapse mb-4 text-sm">
           <thead>
@@ -149,9 +149,9 @@ const Methodology = () => {
           </thead>
           <tbody>
             {[
-              ['rdAvgDofollowTop10', 'Avg dofollow referring domains (Rank > 25)', 'backlinks/summary/live → referring_domains - nofollow'],
-              ['rdMinDofollowTop10', 'Min dofollow RD among Top 10 (Rank > 25)', 'Same'],
-              ['refDomainsTrafficTotal', 'Combined organic traffic of all RDs', 'backlinks/referring_domains/live → organic_traffic'],
+              ['rankAvgDofollowTop10', 'Avg dofollow rank (Rank > 25)', 'backlinks/summary/live → rank (rank_scale: one_hundred)'],
+              ['rankMinDofollowTop10', 'Min dofollow rank among Top 10 (Rank > 25)', 'Same'],
+              ['refDomainsTrafficTotal', 'Combined organic traffic of all referring domains', 'backlinks/referring_domains/live → organic_traffic'],
             ].map(([f, d, s], i) => (
               <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
                 <td className="border border-gray-300 px-3 py-2 font-mono text-xs">{f}</td>
@@ -161,10 +161,10 @@ const Methodology = () => {
             ))}
           </tbody>
         </table>
-        <p className="mb-2 text-sm font-semibold font-sans">Step 1 – Normalize RD values to 0–100:</p>
+        <p className="mb-2 text-sm font-semibold font-sans">Step 1 – Normalize Rank values to 0–100:</p>
         <div className="code-block bg-gray-100 border border-gray-300 rounded p-4 mb-4 font-mono text-sm">
-          <div>RD_Avg_Score = min((rdAvgDofollowTop10 / 100) × 100, 100)</div>
-          <div>RD_Min_Score = min((rdMinDofollowTop10 / 50) × 100, 100)</div>
+          <div>Rank_Avg_Score = min((rankAvgDofollowTop10 / 100) × 100, 100)</div>
+          <div>Rank_Min_Score = min((rankMinDofollowTop10 / 50) × 100, 100)</div>
         </div>
         <p className="mb-2 text-sm font-semibold font-sans">Step 2 – Normalize Referring Domains Traffic:</p>
         <div className="code-block bg-gray-100 border border-gray-300 rounded p-4 mb-4 font-mono text-sm">
@@ -172,7 +172,7 @@ const Methodology = () => {
         </div>
         <p className="mb-2 text-sm font-semibold font-sans">Step 3 – Final Backlinks Score:</p>
         <div className="code-block bg-gray-100 border border-gray-300 rounded p-4 mb-6 font-mono text-sm">
-          BacklinksScore = (RD_Avg_Score × 0.45) + (RD_Min_Score × 0.25) + (Traffic_Score × 0.30)
+          BacklinksScore = (Rank_Avg_Score × 0.45) + (Rank_Min_Score × 0.25) + (Traffic_Score × 0.30)
         </div>
 
         {/* 3. Page Power */}

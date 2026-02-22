@@ -76,25 +76,25 @@ DomainPowerScore = (rankAvgTop10 × 0.5) + (rankMinTop10 × 0.3) + (rankMaxTop10
 
 ### 2️⃣ Backlinks Power
 
-**What it measures:** How many strong backlinks are required to rank. If competitors have strong referring domain profiles → hard. If competitors rank with few or weak backlinks → easier.
+**What it measures:** How many strong backlinks are required to rank. If competitors have strong backlink profiles → hard. If competitors rank with few or weak backlinks → easier.
 
 **Inputs:**
 
 | Field | Description | DataForSEO Source |
 |---|---|---|
-| `rdAvgDofollowTop10` | Avg dofollow referring domains per page (Domain Rank > 25 only) | `backlinks/summary/live` → `referring_domains` minus `referring_domains_nofollow` |
-| `rdMinDofollowTop10` | Min dofollow RD among Top 10 (Domain Rank > 25 only) | Same |
+| `rankAvgDofollowTop10` | Avg dofollow rank per page (Domain Rank > 25 only) | `backlinks/summary/live` → `rank` with `rank_scale: "one_hundred"` |
+| `rankMinDofollowTop10` | Min dofollow rank among Top 10 (Domain Rank > 25 only) | Same |
 | `refDomainsTrafficTotal` | Combined organic traffic of all referring domains | `backlinks/referring_domains/live` → `organic_traffic` (aggregated) |
 
-**Step 1 – Normalize RD values to 0–100:**
+**Step 1 – Normalize Rank values to 0–100:**
 
 ```
-RD_Avg_Score = min((rdAvgDofollowTop10 / 100) × 100, 100)
-RD_Min_Score = min((rdMinDofollowTop10 / 50) × 100, 100)
+Rank_Avg_Score = min((rankAvgDofollowTop10 / 100) × 100, 100)
+Rank_Min_Score = min((rankMinDofollowTop10 / 50) × 100, 100)
 ```
 
-- 100 RD avg → score 100
-- 50 RD min → score 100
+- 100 rank avg → score 100
+- 50 rank min → score 100
 
 **Step 2 – Normalize Referring Domains Traffic:**
 
@@ -108,7 +108,7 @@ Traffic_Score = min((refDomainsTrafficTotal / 1,000,000) × 100, 100)
 **Step 3 – Final Backlinks Score:**
 
 ```
-BacklinksScore = (RD_Avg_Score × 0.45) + (RD_Min_Score × 0.25) + (Traffic_Score × 0.30)
+BacklinksScore = (Rank_Avg_Score × 0.45) + (Rank_Min_Score × 0.25) + (Traffic_Score × 0.30)
 ```
 
 **Interpretation:**

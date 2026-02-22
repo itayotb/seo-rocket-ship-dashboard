@@ -60,16 +60,16 @@ const columnTooltips: Record<string, { title: string; description: string }> = {
     description: 'Combined difficulty score (0-100) calculated from: Domain Power (33%) + Backlinks (33%) + Page Power (33%). Lower score = easier to rank.'
   },
   drAvg: {
-    title: 'Domain Rank Average (Top 10)',
+    title: 'Rank Average (Top 10)',
     description: 'Average Domain Rank of the top 10 ranking pages. DataForSEO rank measures overall domain authority on a 0-100 scale (rank_scale: one_hundred). Lower rank = weaker competition.'
   },
   drMin: {
-    title: 'Domain Rank Minimum (Top 10)',
+    title: 'Rank Minimum (Top 10)',
     description: 'Lowest Domain Rank among the top 10 results. Shows the weakest competitor currently ranking. If low, there\'s opportunity to compete.'
   },
   rdAvg: {
-    title: 'Referring Domains Avg',
-    description: 'Average number of unique dofollow referring domains (backlinks) to the top 10 pages. Fewer RDs = less link building required to compete.'
+    title: 'Rank Average (Backlinks)',
+    description: 'Average backlink-based rank score for the top 10 pages. Measures overall backlink strength on a 0-100 scale. Lower = less link building required to compete.'
   },
   pageRank: {
     title: 'Page Rank Avg (Top 10)',
@@ -270,12 +270,12 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
       'Keyword',
       'Volume',
       'Score',
-      'Domain Rank Avg (Top 10)',
-      'Domain Rank Min (Top 10)',
-      'Domain Rank Max (Top 10)',
-      'RD Avg (Top 10)',
-      'RD Min (Top 10)',
-      'Page Rank Avg (Top 10)',
+      'Rank Average (Top 10)',
+      'Rank Minimum (Top 10)',
+      'Rank Maximum (Top 10)',
+      'Rank Average Backlinks (Top 10)',
+      'Rank Minimum Backlinks (Top 10)',
+      'Page Rank Average (Top 10)',
       'Domain Score',
       'Backlinks Score',
       'Page Score',
@@ -489,9 +489,9 @@ const AnalysisResultsPanel: React.FC<AnalysisResultsPanelProps> = ({ results, on
                   <StaticHeader label="GEO" tooltipKey="geo" />
                   <SortHeader label="Volume" sortKeyValue="volume" tooltipKey="volume" />
                   <SortHeader label="Score" sortKeyValue="score" tooltipKey="score" />
-                  <SortHeader label="Rank Avg" sortKeyValue="drAvg" tooltipKey="drAvg" />
-                  <SortHeader label="Rank Min" sortKeyValue="drMin" tooltipKey="drMin" />
-                  <SortHeader label="RD Avg" sortKeyValue="rdAvg" tooltipKey="rdAvg" />
+                  <SortHeader label="Rank Average" sortKeyValue="drAvg" tooltipKey="drAvg" />
+                  <SortHeader label="Rank Minimum" sortKeyValue="drMin" tooltipKey="drMin" />
+                  <SortHeader label="Rank Average" sortKeyValue="rdAvg" tooltipKey="rdAvg" />
                   <SortHeader label="Page Rank" sortKeyValue="pageRank" tooltipKey="pageRank" />
                   <StaticHeader label="Domain" tooltipKey="domain" />
                   <StaticHeader label="Backlinks" tooltipKey="backlinks" />
