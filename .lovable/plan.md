@@ -1,34 +1,38 @@
 
 
-# Plan: Clean Up Analysis Model for DataForSEO Compatibility
+# Create Updated Keyword Analysis Documentation
 
-## What Changes
+## Overview
+Create a new markdown document (`public/docs/keyword-analysis-methodology.md`) that replaces the old PDF and accurately describes how the system works with the DataForSEO API.
 
-### 1. Remove `serpStabilityScore` (no DataForSEO source)
-- **`src/types/keywordResearch.ts`**: Remove `serpStabilityScore` from `KeywordAnalysis` interface
-- **`src/components/keyword-research/AnalysisResultsPanel.tsx`**: Remove "SERP Stability" from CSV export headers and row data
-- **`public/data/car_loans_ca_analyzed.json`**: Remove `serpStabilityScore` from all 10 entries
+## Key Differences from Old PDF
 
-### 2. Rename `urAvgTop10` to `pageRankAvgTop10` (DataForSEO uses page `rank`)
-- **`src/types/keywordResearch.ts`**: Rename field in `PagePowerAnalysis`
-- **`src/components/keyword-research/AnalysisResultsPanel.tsx`**:
-  - Update all references from `urAvgTop10` to `pageRankAvgTop10`
-  - Rename column header from "UR Avg" to "Page Rank"
-  - Update tooltip from "URL Rating" to "Page Backlink Rank (DataForSEO)" with updated description
-  - Update CSV header from "UR Avg (Top 10)" to "Page Rank Avg (Top 10)"
-- **`public/data/car_loans_ca_analyzed.json`**: Rename field in all 10 entries
+| Aspect | Old (Rapid API) | New (DataForSEO) |
+|---|---|---|
+| Categories | 5 (Domain, Backlinks, Page, Intent, SERP Stability) | 3 (Domain, Backlinks, Page) |
+| Weights | 25% + 25% + 20% + 20% + 10% | 33% + 33% + 33% |
+| Page Power metric | `urAvgTop10` (URL Rating) | `pageRankAvgTop10` (page-level `rank` from `backlinks/summary/live`) |
+| SERP Stability | Included (10%) | Removed (no DataForSEO source) |
+| Intent Score | Included (20%) | Removed from difficulty formula (intent is still displayed but not scored) |
+| Competition field | Not present | Added (DataForSEO float 0-1, mapped to LOW/MEDIUM/HIGH) |
+| CPC field | Not present | Added from `keyword_suggestions/live` |
+| KD field | Not present | Added from `bulk_keyword_difficulty/live` |
 
-### 3. Update `difficultyScore` formula comment
-- Add a comment in the types file clarifying the formula now uses Page Rank instead of UR:
-  - Domain Power (33%) + Backlinks (33%) + Page Power (33%)
-  - Page Power is based on DataForSEO's page-level `rank` from `backlinks/summary/live`
+## Document Content Structure
 
-## Files Modified
-1. `src/types/keywordResearch.ts` - Remove `serpStabilityScore`, rename `urAvgTop10`
-2. `src/components/keyword-research/AnalysisResultsPanel.tsx` - Update column, tooltip, CSV export
-3. `public/data/car_loans_ca_analyzed.json` - Update demo data
+1. **Keyword Base Data** - id, keyword, country, volume, difficulty (KD), cpc, competition, intents
+2. **Analysis Category 1: Domain Power** - same formula as before (DR avg/min/max)
+3. **Analysis Category 2: Backlinks Power** - same formula (RD avg/min, traffic)
+4. **Analysis Category 3: Page Power** - updated to use DataForSEO `pageRankAvgTop10`
+5. **Final Difficulty Score** - updated to 33/33/33 weights
+6. **Difficulty Labels** - same 6-scale model
+7. **Recommended Site Type** - same logic
+8. **DataForSEO API Endpoints Reference** - which endpoint provides each field
 
-## Technical Details
-- The `difficultyScore` calculation itself doesn't change (it's a weighted average of the 3 sub-scores) - only the data source for `pagePower.score` will differ when the API is connected
-- No UI layout changes needed - same number of columns, just renamed
+## File to Create
+- `public/docs/keyword-analysis-methodology.md` - Full methodology document
 
+## Technical Notes
+- The document will be a Markdown file stored in the project for easy reference
+- All formulas will match exactly what the code implements
+- DataForSEO endpoint names will be included for developer reference
