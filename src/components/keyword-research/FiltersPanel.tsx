@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FiltersState, defaultFilters, IntentType } from '@/types/keywordResearch';
+import { FiltersState, defaultFilters, IntentType, CompetitionLevel } from '@/types/keywordResearch';
 import { Filter, RotateCcw } from 'lucide-react';
 
 interface FiltersPanelProps {
@@ -19,7 +19,6 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({ onApplyFilters }) => {
 
   const intentOptions: IntentType[] = ['Informational', 'Commercial', 'Transactional', 'Navigational'];
 
-  // Apply filters automatically when any filter changes
   useEffect(() => {
     const terms = includeText
       .split(',')
@@ -74,6 +73,101 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({ onApplyFilters }) => {
             }))}
             placeholder="0"
           />
+        </div>
+
+        {/* Keyword Difficulty Filter */}
+        <div className="space-y-2">
+          <Label>Keyword Difficulty (KD)</Label>
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <Input
+                type="number"
+                min={0}
+                max={100}
+                value={localFilters.minDifficulty}
+                onChange={(e) => setLocalFilters(prev => ({
+                  ...prev,
+                  minDifficulty: parseInt(e.target.value) || 0,
+                }))}
+                placeholder="Min"
+              />
+            </div>
+            <div className="flex-1">
+              <Input
+                type="number"
+                min={0}
+                max={100}
+                value={localFilters.maxDifficulty}
+                onChange={(e) => setLocalFilters(prev => ({
+                  ...prev,
+                  maxDifficulty: parseInt(e.target.value) || 100,
+                }))}
+                placeholder="Max"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* CPC Filter */}
+        <div className="space-y-2">
+          <Label>CPC ($)</Label>
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <Input
+                type="number"
+                min={0}
+                step={0.01}
+                value={localFilters.minCpc}
+                onChange={(e) => setLocalFilters(prev => ({
+                  ...prev,
+                  minCpc: parseFloat(e.target.value) || 0,
+                }))}
+                placeholder="Min"
+              />
+            </div>
+            <div className="flex-1">
+              <Input
+                type="number"
+                min={0}
+                step={0.01}
+                value={localFilters.maxCpc}
+                onChange={(e) => setLocalFilters(prev => ({
+                  ...prev,
+                  maxCpc: parseFloat(e.target.value) || 999,
+                }))}
+                placeholder="Max"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Competition Filter */}
+        <div className="space-y-3">
+          <Label>Competition</Label>
+          <RadioGroup
+            value={localFilters.competition}
+            onValueChange={(value) => setLocalFilters(prev => ({
+              ...prev,
+              competition: value as FiltersState['competition'],
+            }))}
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="all" id="comp-all" />
+              <Label htmlFor="comp-all" className="text-sm font-normal cursor-pointer">All</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="LOW" id="comp-low" />
+              <Label htmlFor="comp-low" className="text-sm font-normal cursor-pointer">Low</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="MEDIUM" id="comp-medium" />
+              <Label htmlFor="comp-medium" className="text-sm font-normal cursor-pointer">Medium</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="HIGH" id="comp-high" />
+              <Label htmlFor="comp-high" className="text-sm font-normal cursor-pointer">High</Label>
+            </div>
+          </RadioGroup>
         </div>
 
         {/* Intent Filter */}
