@@ -4,6 +4,17 @@
 
 ---
 
+## Important: DataForSEO Terminology
+
+This system uses **DataForSEO's native `rank` metric** — not Ahrefs "Domain Rating (DR)" or "URL Rating (UR)".
+
+- **Domain Rank** = `rank` from `backlinks/summary/live` with a **domain-level target**
+- **Page Rank** = `rank` from `backlinks/summary/live` with a **page-level target**
+
+We use `rank_scale: "one_hundred"` in all API calls so rank values are returned on a **0–100 scale** (instead of the default 0–1000).
+
+---
+
 ## Keyword Base Data (Not Scored)
 
 These fields exist per keyword but are **not** part of the difficulty score calculation:
@@ -45,16 +56,16 @@ The system uses **3 scored categories** to compute a final difficulty score.
 
 | Field | Description | DataForSEO Source |
 |---|---|---|
-| `drAvgTop10` | Average Domain Rank of Top 10 | `backlinks/summary/live` → `rank` (domain-level) |
-| `drMinTop10` | Lowest Domain Rank in Top 10 | Same |
-| `drMaxTop10` | Highest Domain Rank in Top 10 | Same |
+| `rankAvgTop10` | Average Domain Rank of Top 10 | `backlinks/summary/live` (domain target) → `rank` with `rank_scale: "one_hundred"` |
+| `rankMinTop10` | Lowest Domain Rank in Top 10 | Same |
+| `rankMaxTop10` | Highest Domain Rank in Top 10 | Same |
 
-All values naturally scale 0–100.
+All values scale 0–100 (using `rank_scale: "one_hundred"`).
 
 **Score Formula:**
 
 ```
-DomainPowerScore = (drAvgTop10 × 0.5) + (drMinTop10 × 0.3) + (drMaxTop10 × 0.2)
+DomainPowerScore = (rankAvgTop10 × 0.5) + (rankMinTop10 × 0.3) + (rankMaxTop10 × 0.2)
 ```
 
 **Interpretation:**
@@ -71,8 +82,8 @@ DomainPowerScore = (drAvgTop10 × 0.5) + (drMinTop10 × 0.3) + (drMaxTop10 × 0.
 
 | Field | Description | DataForSEO Source |
 |---|---|---|
-| `rdAvgDofollowTop10` | Avg dofollow referring domains per page (DR > 25 only) | `backlinks/summary/live` → `referring_domains` minus `referring_domains_nofollow` |
-| `rdMinDofollowTop10` | Min dofollow RD among Top 10 (DR > 25 only) | Same |
+| `rdAvgDofollowTop10` | Avg dofollow referring domains per page (Domain Rank > 25 only) | `backlinks/summary/live` → `referring_domains` minus `referring_domains_nofollow` |
+| `rdMinDofollowTop10` | Min dofollow RD among Top 10 (Domain Rank > 25 only) | Same |
 | `refDomainsTrafficTotal` | Combined organic traffic of all referring domains | `backlinks/referring_domains/live` → `organic_traffic` (aggregated) |
 
 **Step 1 – Normalize RD values to 0–100:**
@@ -114,9 +125,9 @@ BacklinksScore = (RD_Avg_Score × 0.45) + (RD_Min_Score × 0.25) + (Traffic_Scor
 
 | Field | Description | DataForSEO Source |
 |---|---|---|
-| `pageRankAvgTop10` | Average page-level rank of Top 10 | `backlinks/summary/live` → page-level `rank` |
+| `pageRankAvgTop10` | Average page-level rank of Top 10 | `backlinks/summary/live` (page target) → `rank` with `rank_scale: "one_hundred"` |
 
-The page `rank` from DataForSEO is already scaled 0–100.
+The page `rank` from DataForSEO is scaled 0–100 (using `rank_scale: "one_hundred"`).
 
 **Score:**
 
@@ -175,11 +186,21 @@ Based **only** on the final difficulty score:
 |---|---|---|
 | Keyword suggestions, volume, CPC, competition, intents | `dataforseo_labs/keyword_suggestions/live` | `search_volume`, `cpc`, `competition`, `search_intent_info` |
 | Keyword difficulty (KD) | `dataforseo_labs/bulk_keyword_difficulty/live` | `keyword_difficulty` |
-| Domain Rank | `backlinks/summary/live` (domain-level) | `rank` |
-| Page Rank | `backlinks/summary/live` (page-level) | `rank` |
+| Domain Rank | `backlinks/summary/live` (domain-level target) | `rank` (with `rank_scale: "one_hundred"`) |
+| Page Rank | `backlinks/summary/live` (page-level target) | `rank` (with `rank_scale: "one_hundred"`) |
 | Referring domains (dofollow) | `backlinks/summary/live` | `referring_domains`, `referring_domains_nofollow` |
 | Referring domains traffic | `backlinks/referring_domains/live` | `organic_traffic` (aggregated) |
 | SERP results (Top 10) | `serp/google/organic/live/regular` | `items[]` → URLs for backlink lookups |
+
+### API Call Parameter
+
+All `backlinks/summary/live` calls must include:
+```json
+{
+  "rank_scale": "one_hundred"
+}
+```
+This ensures `rank` values are returned on a 0–100 scale instead of the default 0–1000.
 
 ---
 
@@ -198,10 +219,10 @@ Based **only** on the final difficulty score:
    Returns: Top 10 URLs for the keyword
 
 6. For each Top 10 URL:
-   → backlinks/summary/live (page-level)
+   → backlinks/summary/live (page-level, rank_scale: "one_hundred")
    Returns: page rank, referring domains
 
-   → backlinks/summary/live (domain-level)
+   → backlinks/summary/live (domain-level, rank_scale: "one_hundred")
    Returns: domain rank
 
    → backlinks/referring_domains/live
