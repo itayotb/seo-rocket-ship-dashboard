@@ -57,13 +57,58 @@ export const useKeywordResearch = () => {
   }, []);
 
   // Placeholder for real API search - will call edge function when Cloud is enabled
-  const searchKeywords = useCallback(async (keyword: string, country: string, language: string) => {
+  const searchKeywords = useCallback(async (keyword: string, country: string, language: string, preFilters?: { limit: number; minVolume: number; noVolumeFilter: boolean; includeKeywords: string }) => {
     setSearchKeyword(keyword);
     setSearchCountry(country);
     setSearchLanguage(language);
-    // For now, fall back to demo data
-    await loadDemoData();
-  }, [loadDemoData]);
+    setIsLoading(true);
+    try {
+      const res = await fetch('/data/car_loans_ca_demo.json');
+      const rawData: RawKeywordData[] = await res.json();
+      let parsedKeywords = parseRawData(rawData);
+
+      // Apply pre-search filters (mock of server-side filtering)
+      if (preFilters) {
+        // Volume filter
+        if (!preFilters.noVolumeFilter && preFilters.minVolume > 0) {
+          parsedKeywords = parsedKeywords.filter(k => k.volume >= preFilters.minVolume);
+        }
+
+        // Include keywords filter
+        if (preFilters.includeKeywords.trim()) {
+          const raw = preFilters.includeKeywords.trim();
+          const exactMatch = raw.match(/^"(.+)"$/);
+          if (exactMatch) {
+            const phrase = exactMatch[1].toLowerCase();
+            parsedKeywords = parsedKeywords.filter(k => k.keyword.toLowerCase().includes(phrase));
+          } else {
+            const terms = raw.split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
+            if (terms.length > 0) {
+              parsedKeywords = parsedKeywords.filter(k =>
+                terms.some(term => k.keyword.toLowerCase().includes(term))
+              );
+            }
+          }
+        }
+
+        // Limit
+        if (preFilters.limit > 0) {
+          parsedKeywords = parsedKeywords.slice(0, preFilters.limit);
+        }
+      }
+
+      setAllKeywords(parsedKeywords);
+      setFilteredKeywords(parsedKeywords);
+      setIsLoaded(true);
+      setSelectedIds([]);
+      setAnalysisResults([]);
+      setShowAnalysis(false);
+    } catch (error) {
+      console.error('Failed to search keywords:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const applyFilters = useCallback((newFilters: FiltersState) => {
     setFilters(newFilters);
