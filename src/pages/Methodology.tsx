@@ -29,6 +29,60 @@ const Methodology = () => {
         <p className="text-center text-gray-500 mb-8 text-sm">How the keyword difficulty analysis system works with the DataForSEO API</p>
         <hr className="mb-8 border-gray-300" />
 
+        {/* DataForSEO API Services Used */}
+        <h2 className="text-2xl font-bold font-sans mt-6 mb-4">DataForSEO API Services Used</h2>
+        <p className="mb-4 text-sm">This system uses the following DataForSEO API services:</p>
+        <table className="w-full border-collapse mb-6 text-sm">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border border-gray-300 px-3 py-2 text-left font-sans">Category</th>
+              <th className="border border-gray-300 px-3 py-2 text-left font-sans">API Service</th>
+              <th className="border border-gray-300 px-3 py-2 text-left font-sans">What We Use It For</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              ['Keyword Data', 'dataforseo_labs/keyword_suggestions/live', 'Fetch keyword suggestions, volume, CPC, competition, and search intent'],
+              ['Keyword Data', 'dataforseo_labs/bulk_keyword_difficulty/live', 'Get KD scores for multiple keywords at once'],
+              ['SERP API', 'serp/google/organic/live/regular', 'Retrieve Top 10 Google organic results for deep analysis'],
+              ['Backlinks API', 'backlinks/summary/live', 'Get Domain Rank and Page Rank (with rank_scale: "one_hundred")'],
+              ['Backlinks API', 'backlinks/referring_domains/live', 'Get referring domain count and organic traffic data'],
+            ].map(([cat, service, usage], i) => (
+              <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
+                <td className="border border-gray-300 px-3 py-2 font-semibold">{cat}</td>
+                <td className="border border-gray-300 px-3 py-2 font-mono text-xs">{service}</td>
+                <td className="border border-gray-300 px-3 py-2">{usage}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <h3 className="text-lg font-bold font-sans mb-3">API Services NOT Currently Used</h3>
+        <p className="mb-3 text-sm">The following DataForSEO services are available but <strong>not</strong> part of the current implementation:</p>
+        <table className="w-full border-collapse mb-8 text-sm">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border border-gray-300 px-3 py-2 text-left font-sans">Category</th>
+              <th className="border border-gray-300 px-3 py-2 text-left font-sans">API Service</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              ['Search & Generative Engine Optimization', 'AI Optimization'],
+              ['Keyword Data', 'Google Ads API, Bing Ads API, Google Trends API'],
+              ['On-page SEO & Website Health', 'OnPage API, Lighthouse API, Content Analysis API'],
+              ['Website Visibility', 'DataForSEO Labs API (advanced), Domain Analytics API'],
+              ['Ecommerce', 'Business Data API, Merchant API (Amazon), Merchant API (Google Shopping)'],
+              ['App Data', 'App Store API, Google Play API'],
+            ].map(([cat, service], i) => (
+              <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
+                <td className="border border-gray-300 px-3 py-2 font-semibold">{cat}</td>
+                <td className="border border-gray-300 px-3 py-2">{service}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
         {/* Important Note */}
         <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 rounded-r">
           <p className="font-sans font-semibold text-blue-800 mb-1">Important: DataForSEO Terminology</p>
@@ -297,22 +351,25 @@ const Methodology = () => {
         {/* Data Flow */}
         <h2 className="text-2xl font-bold font-sans mt-10 mb-4">Data Flow</h2>
         <div className="code-block bg-gray-50 border border-gray-300 rounded p-5 mb-8 font-mono text-sm leading-7">
-          <div>1. User enters keyword + country</div>
-          <div className="ml-4">→ dataforseo_labs/keyword_suggestions/live</div>
-          <div className="ml-6 text-gray-500">Returns: volume, cpc, competition, intents + related keywords</div>
-          <div className="mt-2">2. → dataforseo_labs/bulk_keyword_difficulty/live</div>
+          <div>1. User enters seed keyword + country + pre-search filters</div>
+          <div className="ml-6 text-gray-500">(limit, min volume, must-include words)</div>
+          <div className="mt-2 ml-4">→ dataforseo_labs/keyword_suggestions/live</div>
+          <div className="ml-6 text-gray-500">Params: keyword, location_code, language_code, limit, filters</div>
+          <div className="ml-6 text-gray-500">Returns: keyword suggestions with volume, cpc, competition, intents</div>
+          <div className="mt-2">2. Client-side: apply "must include words" filter</div>
+          <div className="mt-2">3. → dataforseo_labs/bulk_keyword_difficulty/live</div>
           <div className="ml-6 text-gray-500">Returns: KD score per keyword</div>
-          <div className="mt-2">3. User selects keywords for deep analysis</div>
-          <div className="mt-2">4. → serp/google/organic/live/regular</div>
+          <div className="mt-2">4. User selects keywords for deep analysis</div>
+          <div className="mt-2">5. → serp/google/organic/live/regular</div>
           <div className="ml-6 text-gray-500">Returns: Top 10 URLs for the keyword</div>
-          <div className="mt-2">5. For each Top 10 URL:</div>
+          <div className="mt-2">6. For each Top 10 URL:</div>
           <div className="ml-4">→ backlinks/summary/live (page-level, rank_scale: "one_hundred")</div>
           <div className="ml-6 text-gray-500">Returns: page rank, referring domains</div>
           <div className="ml-4 mt-1">→ backlinks/summary/live (domain-level, rank_scale: "one_hundred")</div>
           <div className="ml-6 text-gray-500">Returns: domain rank</div>
           <div className="ml-4 mt-1">→ backlinks/referring_domains/live</div>
           <div className="ml-6 text-gray-500">Returns: referring domains with traffic data</div>
-          <div className="mt-2">6. Aggregate metrics → compute 3 category scores → final DifficultyScore</div>
+          <div className="mt-2">7. Aggregate metrics → compute 3 category scores → final DifficultyScore</div>
         </div>
 
         {/* Footer */}

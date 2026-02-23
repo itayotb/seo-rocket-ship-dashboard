@@ -4,6 +4,33 @@
 
 ---
 
+## DataForSEO API Services Used
+
+This system uses the following DataForSEO API services:
+
+| Category | API Service | What We Use It For |
+|---|---|---|
+| **Keyword Data** | `dataforseo_labs/keyword_suggestions/live` | Fetch keyword suggestions, search volume, CPC, competition, and search intent for a seed keyword |
+| **Keyword Data** | `dataforseo_labs/bulk_keyword_difficulty/live` | Get keyword difficulty (KD) scores for multiple keywords at once |
+| **SERP API** | `serp/google/organic/live/regular` | Retrieve Top 10 Google organic results for deep analysis |
+| **Backlinks API** | `backlinks/summary/live` | Get Domain Rank and Page Rank metrics (with `rank_scale: "one_hundred"`) |
+| **Backlinks API** | `backlinks/referring_domains/live` | Get referring domain count and organic traffic data |
+
+### API Services NOT Currently Used
+
+The following DataForSEO services are available but **not** part of the current implementation:
+
+| Category | API Service |
+|---|---|
+| Search & Generative Engine Optimization | AI Optimization |
+| Keyword Data | Google Ads API, Bing Ads API, Google Trends API |
+| On-page SEO & Website Health | OnPage API, Lighthouse API, Content Analysis API |
+| Website Visibility | DataForSEO Labs API (advanced), Domain Analytics API |
+| Ecommerce | Business Data API, Merchant API (Amazon), Merchant API (Google Shopping) |
+| App Data | App Store API, Google Play API |
+
+---
+
 ## Important: DataForSEO Terminology
 
 This system uses **DataForSEO's native `rank` metric** — not Ahrefs "Domain Rating (DR)" or "URL Rating (UR)".
@@ -207,18 +234,21 @@ This ensures `rank` values are returned on a 0–100 scale instead of the defaul
 ## Data Flow
 
 ```
-1. User enters keyword + country
+1. User enters seed keyword + country + pre-search filters (limit, min volume, include words)
 2. → dataforseo_labs/keyword_suggestions/live
-   Returns: volume, cpc, competition, intents + related keywords
+   Params: keyword, location_code, language_code, limit, filters (search_volume >= min)
+   Returns: keyword suggestions with volume, cpc, competition, intents
 
-3. → dataforseo_labs/bulk_keyword_difficulty/live
+3. Client-side: apply "must include words" filter on returned keywords
+
+4. → dataforseo_labs/bulk_keyword_difficulty/live
    Returns: KD score per keyword
 
-4. User selects keywords for deep analysis
-5. → serp/google/organic/live/regular
+5. User selects keywords for deep analysis
+6. → serp/google/organic/live/regular
    Returns: Top 10 URLs for the keyword
 
-6. For each Top 10 URL:
+7. For each Top 10 URL:
    → backlinks/summary/live (page-level, rank_scale: "one_hundred")
    Returns: page rank, referring domains
 
@@ -228,5 +258,5 @@ This ensures `rank` values are returned on a 0–100 scale instead of the defaul
    → backlinks/referring_domains/live
    Returns: referring domains with traffic data
 
-7. Aggregate metrics → compute 3 category scores → final DifficultyScore
+8. Aggregate metrics → compute 3 category scores → final DifficultyScore
 ```
