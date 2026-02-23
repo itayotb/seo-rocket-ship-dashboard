@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useKeywordResearch } from '@/hooks/useKeywordResearch';
-import SearchHeader from './SearchHeader';
+import SearchHeader, { PreSearchFilters } from './SearchHeader';
 import FiltersPanel from './FiltersPanel';
 import KeywordsTable from './KeywordsTable';
 import SummaryActions from './SummaryActions';
